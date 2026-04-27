@@ -135,7 +135,8 @@ $(document).ready(function () {
                 width: '160px',
                 className: 'text-end',
                 render: function (data) {
-                    return 'S/ ' + parseFloat(data).toFixed(2);
+                    const monto = parseFloat(data || 0);
+                    return 'S/ ' + monto.toFixed(2);
                 }
             },
             {
@@ -143,7 +144,8 @@ $(document).ready(function () {
                 width: '120px',
                 className: 'text-end',
                 render: function (data) {
-                    return 'S/ ' + parseFloat(data).toFixed(2);
+                    const monto = parseFloat(data || 0);
+                    return 'S/ ' + monto.toFixed(2);
                 }
             },
             { data: 'descripcion', orderable: false },
@@ -192,29 +194,47 @@ $(document).ready(function () {
             data: $(this).serialize(),
             dataType: 'json',
             success: function (response) {
-                if (response.status === 'success') {
+                const esExitoso = response && (
+                    response.status === 'success' ||
+                    response.status === true ||
+                    response.success === true ||
+                    response.ok === true
+                );
+
+                const mensaje = response && response.message
+                    ? response.message
+                    : (esExitoso ? 'Egreso registrado correctamente' : 'No se pudo guardar el egreso');
+
+                if (esExitoso) {
+                    modalEgreso.hide();
+                    tabla.ajax.reload(null, false);
+
                     Swal.fire({
                         icon: 'success',
-                        title: 'Éxito',
-                        text: response.message,
+                        title: 'Registro guardado',
+                        text: mensaje,
                         timer: 2000,
                         showConfirmButton: false
                     });
-                    modalEgreso.hide();
-                    tabla.ajax.reload(null, false);
                 } else {
                     Swal.fire({
                         icon: 'error',
-                        title: 'Error',
-                        text: response.message
+                        title: 'No se pudo guardar',
+                        text: mensaje
                     });
                 }
             },
-            error: function () {
+            error: function (xhr) {
+                let mensaje = 'Error al guardar el egreso';
+
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    mensaje = xhr.responseJSON.message;
+                }
+
                 Swal.fire({
                     icon: 'error',
-                    title: 'Error',
-                    text: 'Error al guardar el egreso'
+                    title: 'Error de solicitud',
+                    text: mensaje
                 });
             },
             complete: function () {
