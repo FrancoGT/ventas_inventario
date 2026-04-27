@@ -1,3 +1,5 @@
+<?= $this->extend('layouts/auth') ?>
+
 <?= $this->section('css') ?>
 <style>
     .login-container {
@@ -220,4 +222,120 @@
         margin-bottom: 0;
     }
 </style>
+<?= $this->endSection() ?>
+
+<?= $this->section('content') ?>
+<div class="login-container">
+    <div class="login-card">
+        <div class="login-header">
+            <h4><i class="fas fa-store"></i> Sistema de Ventas</h4>
+            <small>Ingrese sus credenciales</small>
+        </div>
+
+        <div class="login-body">
+
+            <?php if (session()->getFlashdata('errors')): ?>
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <strong>Errores de validación:</strong>
+                    <ul class="mt-2 mb-0">
+                        <?php foreach (session()->getFlashdata('errors') as $error): ?>
+                            <li><?= esc($error) ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+            <?php endif; ?>
+
+            <?php if (session()->getFlashdata('error')): ?>
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <?= session()->getFlashdata('error') ?>
+                </div>
+            <?php endif; ?>
+
+            <?php if (session()->getFlashdata('success')): ?>
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle"></i>
+                    <?= session()->getFlashdata('success') ?>
+                </div>
+            <?php endif; ?>
+
+            <form action="/login/authenticate" method="POST" id="loginForm">
+                <?= csrf_field() ?>
+
+                <div class="mb-3">
+                    <label for="username" class="form-label">
+                        <i class="fas fa-user"></i> Usuario
+                    </label>
+                    <input 
+                        type="text" 
+                        class="form-control" 
+                        id="username" 
+                        name="username" 
+                        value="<?= old('username') ?>"
+                        placeholder="Ingrese su usuario"
+                        autocomplete="username"
+                        autofocus
+                        required>
+                </div>
+
+                <div class="mb-4">
+                    <label for="password" class="form-label">
+                        <i class="fas fa-lock"></i> Contraseña
+                    </label>
+
+                    <div class="input-group">
+                        <input 
+                            type="password" 
+                            class="form-control" 
+                            id="password" 
+                            name="password" 
+                            placeholder="Ingrese su contraseña"
+                            autocomplete="current-password"
+                            required>
+
+                        <button 
+                            class="btn btn-outline-secondary" 
+                            type="button" 
+                            id="togglePassword">
+                            <i class="fas fa-eye" id="eyeIcon"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-login" id="btnLogin">
+                        <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+<?= $this->endSection() ?>
+
+<?= $this->section('js') ?>
+<script>
+$(document).ready(function() {
+    $('#togglePassword').on('click', function() {
+        const input = $('#password');
+        const icon = $('#eyeIcon');
+
+        if (input.attr('type') === 'password') {
+            input.attr('type', 'text');
+            icon.removeClass('fa-eye').addClass('fa-eye-slash');
+        } else {
+            input.attr('type', 'password');
+            icon.removeClass('fa-eye-slash').addClass('fa-eye');
+        }
+    });
+
+    $('#loginForm').on('submit', function() {
+        const btn = $('#btnLogin');
+        btn.prop('disabled', true);
+        btn.html('<i class="fas fa-spinner fa-spin"></i> Verificando...');
+    });
+});
+</script>
 <?= $this->endSection() ?>
