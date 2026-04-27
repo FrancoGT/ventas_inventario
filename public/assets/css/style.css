@@ -1,0 +1,1416 @@
+/* ============================================
+   VARIABLES CSS - PALETA CHARDONAY
+   ============================================ */
+:root {
+    /* Colores de fondo */
+    --chardonay-bg-primary: #F7F5F2;
+    --chardonay-bg-secondary: #FFFFFF;
+    --chardonay-border: #E6E1D8;
+    
+    /* Colores de texto */
+    --chardonay-text-primary: #2E2E2E;
+    --chardonay-text-secondary: #6B6B6B;
+    
+    /* Colores principales */
+    --chardonay-primary: #6B8E6E;
+    --chardonay-primary-hover: #5F7F63;
+    --chardonay-primary-light: #8BA899;
+    --chardonay-secondary: #C2A76D;
+    --chardonay-secondary-hover: #B49A63;
+    --chardonay-secondary-light: #D4BC85;
+    
+    /* Estados */
+    --chardonay-success: #7FAF8A;
+    --chardonay-success-light: #99C4A0;
+    --chardonay-success-dark: #6FA07A;
+    --chardonay-warning: #D1B97A;
+    --chardonay-error: #B85C5C;
+    --chardonay-error-hover: #A94E4E;
+    --chardonay-error-light: #D07070;
+    
+    /* Elementos de interfaz */
+    --chardonay-table-hover: #F0ECE6;
+    --chardonay-input-bg: #FAFAF8;
+    --chardonay-input-focus: #C9D8C5;
+    --chardonay-sidebar-bg: #EFECE7;
+    --chardonay-sidebar-text: #3F3F3F;
+    --chardonay-sidebar-active: #D8E3D5;
+
+    /* Sombras Elegantes */
+    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.08);
+    --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.12);
+    --shadow-xl: 0 12px 24px rgba(0, 0, 0, 0.15);
+
+    /* Alturas estándar unificadas */
+    --height-input: 42px;    /* ← Subido de 38px para Cormorant */
+    --height-btn: 42px;      /* ← Subido de 38px para Cormorant */
+    --height-btn-sm: 36px;   /* ← Subido de 34px */
+    --height-btn-icon: 34px; /* ← Subido de 32px */
+    --height-pagination: 36px; /* ← Subido de 34px */
+    --height-table-row: 44px;  /* ← Subido de 40px */
+
+    /* NUEVO: Tipografía dual (serif para headings, sans para UI) */
+    --font-display: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+    --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* ============================================
+   RESET Y CONFIGURACIÓN BASE
+   ============================================ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background-color: var(--chardonay-bg-primary);
+    color: var(--chardonay-text-primary);
+    /* UI usa sans-serif para legibilidad en tablas/forms */
+    font-family: var(--font-ui);
+    line-height: 1.6;
+    font-size: 14px;
+}
+
+/* ============================================
+   TIPOGRAFÍA ELEGANTE - CORMORANT GARAMOND
+   Headings usan serif, body/UI usan sans-serif
+   ============================================ */
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    color: var(--chardonay-text-primary);
+    font-weight: 600;
+}
+
+/* Escala tipográfica: intermedia entre estable y propuesto.
+   El propuesto era demasiado grande para una app (3.5rem h1),
+   el estable era demasiado pequeño para Cormorant. */
+h1 {
+    font-size: 2.25rem;
+    font-weight: 700;
+    letter-spacing: -0.8px;
+    line-height: 1.15;
+    margin-bottom: 1.25rem;
+}
+
+h2 {
+    font-size: 1.875rem;
+    font-weight: 700;
+    letter-spacing: -0.6px;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+}
+
+h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: -0.4px;
+    line-height: 1.3;
+    margin-bottom: 0.875rem;
+}
+
+h4 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+    line-height: 1.35;
+    margin-bottom: 0.75rem;
+}
+
+h5 {
+    font-size: 1.125rem;
+    font-weight: 500;
+    letter-spacing: -0.2px;
+    line-height: 1.4;
+    margin-bottom: 0.5rem;
+}
+
+h6 {
+    font-size: 1rem;
+    font-weight: 500;
+    letter-spacing: 0;
+    line-height: 1.4;
+    margin-bottom: 0.5rem;
+}
+
+/* NUEVO: Párrafos con Cormorant para contenido editorial */
+p {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    line-height: 1.7;
+    margin-bottom: 1rem;
+    letter-spacing: 0.3px;
+}
+
+/* NUEVO: Links globales elegantes */
+a {
+    color: var(--chardonay-primary);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: var(--chardonay-primary-hover);
+}
+
+/* ============================================
+   SIDEBAR (ESTABLE - SIN CAMBIOS)
+   Sidebar mantiene sans-serif para navegación
+   ============================================ */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 260px;
+    background-color: var(--chardonay-sidebar-bg);
+    padding: 1.5rem 0;
+    transition: transform 0.3s ease;
+    z-index: 1000;
+    overflow-y: auto;
+    border-right: 1px solid var(--chardonay-border);
+}
+
+.sidebar.collapsed {
+    transform: translateX(-260px);
+}
+
+.sidebar-brand {
+    padding: 0 1.5rem 1.5rem;
+    /* MEJORA: Brand con Cormorant para elegancia */
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--chardonay-text-primary);
+    border-bottom: 1px solid var(--chardonay-border);
+    margin-bottom: 1rem;
+    letter-spacing: -0.3px;
+}
+
+.sidebar-nav {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar-nav-item {
+    margin-bottom: 0.25rem;
+}
+
+.sidebar-nav-link {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1.5rem;
+    color: var(--chardonay-sidebar-text);
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border-left: 3px solid transparent;
+    /* Nav links mantienen sans-serif */
+    font-family: var(--font-ui);
+    font-size: 0.875rem;
+}
+
+.sidebar-nav-link:hover {
+    background-color: var(--chardonay-table-hover);
+    color: var(--chardonay-text-primary);
+    text-decoration: none;
+}
+
+.sidebar-nav-link.active {
+    background-color: var(--chardonay-sidebar-active);
+    border-left-color: var(--chardonay-primary);
+    color: var(--chardonay-text-primary);
+    font-weight: 500;
+}
+
+.sidebar-nav-link i {
+    width: 20px;
+    margin-right: 0.75rem;
+    text-align: center;
+}
+
+/* ============================================
+   TOPBAR (ESTABLE - SIN CAMBIOS)
+   ============================================ */
+.topbar {
+    position: fixed;
+    top: 0;
+    left: 260px;
+    right: 0;
+    height: 60px;
+    background-color: var(--chardonay-bg-secondary);
+    border-bottom: 1px solid var(--chardonay-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.5rem;
+    transition: left 0.3s ease;
+    z-index: 999;
+}
+
+.topbar.full-width {
+    left: 0;
+}
+
+.menu-toggle {
+    background: none;
+    border: none;
+    font-size: 1.25rem;
+    color: var(--chardonay-text-primary);
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.menu-toggle:hover {
+    background-color: var(--chardonay-table-hover);
+}
+
+.user-dropdown {
+    position: relative;
+}
+
+.user-menu-btn {
+    background: none;
+    border: none;
+    color: var(--chardonay-text-primary);
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-ui);
+    font-size: 0.875rem;
+}
+
+.user-menu-btn:hover {
+    background-color: var(--chardonay-table-hover);
+}
+
+.user-dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 0.5rem;
+    background-color: var(--chardonay-bg-secondary);
+    border: 1px solid var(--chardonay-border);
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    min-width: 200px;
+    display: none;
+}
+
+.user-dropdown-menu.show {
+    display: block;
+}
+
+.user-dropdown-item {
+    display: block;
+    padding: 0.75rem 1rem;
+    color: var(--chardonay-text-primary);
+    text-decoration: none;
+    transition: background-color 0.2s;
+    border-bottom: 1px solid var(--chardonay-border);
+    font-family: var(--font-ui);
+    font-size: 0.875rem;
+}
+
+.user-dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.user-dropdown-item:hover {
+    background-color: var(--chardonay-table-hover);
+    text-decoration: none;
+}
+
+/* ============================================
+   MAIN CONTENT (ESTABLE - SIN CAMBIOS)
+   ============================================ */
+.main-content {
+    margin-left: 260px;
+    margin-top: 60px;
+    padding: 1.5rem;
+    transition: margin-left 0.3s ease;
+    min-height: calc(100vh - 60px);
+}
+
+.main-content.full-width {
+    margin-left: 0;
+}
+
+/* ============================================
+   ALERTS (ESTABLE + GRADIENTES ATRACTIVOS)
+   ============================================ */
+.alert {
+    background-color: var(--chardonay-bg-secondary);
+    border: 1px solid var(--chardonay-border);
+    border-radius: 8px;
+    padding: 0.875rem 1.125rem;
+    font-weight: 500;
+    font-size: 0.9rem;
+    font-family: var(--font-display);
+    line-height: 1.6;
+    transition: all 250ms ease;
+}
+
+.alert-success {
+    background: linear-gradient(135deg, rgba(127, 175, 138, 0.12) 0%, rgba(127, 175, 138, 0.04) 100%);
+    border-left: 4px solid var(--chardonay-success);
+    color: var(--chardonay-text-primary);
+}
+
+.alert-danger {
+    background: linear-gradient(135deg, rgba(184, 92, 92, 0.12) 0%, rgba(184, 92, 92, 0.04) 100%);
+    border-left: 4px solid var(--chardonay-error);
+    color: var(--chardonay-text-primary);
+}
+
+/* NUEVO: Clase .alert-error del equipo de diseño (alias) */
+.alert-error {
+    background: linear-gradient(135deg, rgba(184, 92, 92, 0.12) 0%, rgba(184, 92, 92, 0.04) 100%);
+    border-left: 4px solid var(--chardonay-error);
+    color: var(--chardonay-text-primary);
+}
+
+.alert-warning {
+    background: linear-gradient(135deg, rgba(209, 185, 122, 0.12) 0%, rgba(209, 185, 122, 0.04) 100%);
+    border-left: 4px solid var(--chardonay-warning);
+    color: var(--chardonay-text-primary);
+}
+
+.alert-info {
+    background: linear-gradient(135deg, rgba(6, 182, 212, 0.12) 0%, rgba(34, 211, 238, 0.04) 100%);
+    border-left: 4px solid #06B6D4;
+    color: var(--chardonay-text-primary);
+}
+
+/* ============================================
+   CARDS (ESTABLE + MEJORAS INTEGRADAS)
+   ============================================ */
+.card {
+    background-color: var(--chardonay-bg-secondary);
+    border: 1px solid var(--chardonay-border);
+    border-radius: 10px;
+    box-shadow: var(--shadow-sm);
+    transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+    position: relative;
+    /* Padding reset - lo maneja card-body/header/footer */
+    padding: 0;
+    margin-bottom: 1.5rem;
+}
+
+/* Línea gradiente decorativa superior en hover */
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--chardonay-secondary), var(--chardonay-primary), var(--chardonay-secondary));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 400ms cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1;
+}
+
+.card:hover::before {
+    transform: scaleX(1);
+}
+
+.card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-4px);
+}
+
+.card-header {
+    background: linear-gradient(135deg, var(--chardonay-primary) 0%, var(--chardonay-primary-light) 100%);
+    color: white;
+    border-bottom: none;
+    padding: 1rem 1.25rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+.card-header h3,
+.card-header h4,
+.card-header h5 {
+    margin: 0;
+    color: white;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.05rem;
+    font-family: var(--font-display);
+}
+
+.card-body {
+    padding: 1.25rem;
+    background: var(--chardonay-bg-secondary);
+}
+
+/* Cards densas (con tablas o métricas) */
+.card-body:has(.table),
+.card-body:has(.dataTables_wrapper) {
+    padding: 1rem;
+}
+
+.card-footer {
+    background: linear-gradient(135deg, var(--chardonay-bg-primary) 0%, var(--chardonay-bg-secondary) 100%);
+    border-top: 1px solid var(--chardonay-border);
+    padding: 0.875rem 1.25rem;
+    transition: all 250ms ease;
+}
+
+.card-footer:hover {
+    background: linear-gradient(135deg, var(--chardonay-bg-secondary) 0%, var(--chardonay-bg-primary) 100%);
+}
+
+/* Links dentro de card-footer */
+.card-footer a {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--chardonay-primary);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    letter-spacing: 0.3px;
+    transition: all 250ms ease;
+    font-family: var(--font-ui);
+}
+
+.card-footer a:hover {
+    color: var(--chardonay-secondary);
+    text-decoration: none;
+}
+
+.card-footer a i {
+    transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 0.8rem;
+}
+
+.card-footer a:hover i {
+    transform: translateX(4px);
+}
+
+/* Dashboard Metric Cards - Iconos animados */
+.card .d-flex i {
+    opacity: 0.8;
+    transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.card:hover .d-flex i {
+    opacity: 1;
+    transform: scale(1.15) rotate(5deg);
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
+}
+
+.card-body .text-muted {
+    color: var(--chardonay-text-secondary) !important;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    font-family: var(--font-ui);
+}
+
+.card-body .h3 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--chardonay-text-primary);
+    margin: 0.35rem 0 0 0;
+    font-family: var(--font-display);
+}
+
+/* ============================================
+   BUTTONS (ALTURAS ESTANDARIZADAS)
+   ============================================ */
+.btn {
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
+    letter-spacing: 0.3px;
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    overflow: hidden;
+    height: var(--height-btn);
+    padding: 0 1.25rem;
+    font-size: 0.9rem;
+    font-family: var(--font-display);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    line-height: 1;
+}
+
+/* Efecto ripple al hacer click */
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    transform: translate(-50%, -50%);
+    transition: width 500ms, height 500ms;
+    z-index: 0;
+}
+
+.btn:active::before {
+    width: 300px;
+    height: 300px;
+}
+
+.btn > * {
+    position: relative;
+    z-index: 1;
+}
+
+.btn:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Botón pequeño */
+.btn-sm {
+    height: var(--height-btn-sm);
+    padding: 0 0.875rem;
+    font-size: 0.85rem;
+    border-radius: 6px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--chardonay-primary) 0%, var(--chardonay-primary-light) 100%);
+    border-color: var(--chardonay-primary);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, var(--chardonay-primary-hover) 0%, var(--chardonay-primary) 100%);
+    border-color: var(--chardonay-primary-hover);
+    color: white;
+}
+
+.btn-secondary {
+    background: linear-gradient(135deg, var(--chardonay-secondary) 0%, var(--chardonay-secondary-light) 100%);
+    border-color: var(--chardonay-secondary);
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: linear-gradient(135deg, var(--chardonay-secondary-hover) 0%, var(--chardonay-secondary) 100%);
+    border-color: var(--chardonay-secondary-hover);
+    color: white;
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, var(--chardonay-error) 0%, var(--chardonay-error-light) 100%);
+    border-color: var(--chardonay-error);
+    color: white;
+}
+
+.btn-danger:hover {
+    background: linear-gradient(135deg, var(--chardonay-error-hover) 0%, var(--chardonay-error) 100%);
+    border-color: var(--chardonay-error-hover);
+    color: white;
+}
+
+.btn-success {
+    background: linear-gradient(135deg, var(--chardonay-success) 0%, var(--chardonay-success-light) 100%);
+    border-color: var(--chardonay-success);
+    color: white;
+}
+
+.btn-success:hover {
+    background: linear-gradient(135deg, var(--chardonay-success-dark) 0%, var(--chardonay-success) 100%);
+    border-color: var(--chardonay-success-dark);
+    color: white;
+}
+
+.btn-outline-primary {
+    border: 2px solid var(--chardonay-primary);
+    color: var(--chardonay-primary);
+    background: transparent;
+    box-shadow: none;
+}
+
+.btn-outline-primary:hover {
+    background: var(--chardonay-primary);
+    color: white;
+}
+
+/* NUEVO: Botón outline genérico del equipo de diseño */
+.btn-outline {
+    background-color: transparent;
+    border: 2px solid var(--chardonay-primary);
+    color: var(--chardonay-primary);
+    box-shadow: none;
+}
+
+.btn-outline:hover {
+    background-color: var(--chardonay-primary);
+    color: white;
+}
+
+/* Botón icon-only */
+.btn-icon {
+    width: var(--height-btn-icon);
+    height: var(--height-btn-icon);
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+}
+
+/* ============================================
+   ESTILOS BASE PARA ELEMENTOS NATIVOS
+   (Del equipo de diseño - NO interfieren con clases Bootstrap)
+   Solo aplican a elementos sin clase específica
+   ============================================ */
+
+/* Botones nativos sin clase .btn heredan Cormorant */
+button:not(.btn):not(.menu-toggle):not(.user-menu-btn):not(.btn-close):not([class*="paginate"]),
+input[type="button"]:not(.btn),
+input[type="submit"]:not(.btn),
+input[type="reset"]:not(.btn) {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    padding: 10px 24px;
+    min-height: var(--height-btn);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background-color: var(--chardonay-primary);
+    color: white;
+}
+
+button:not(.btn):not(.menu-toggle):not(.user-menu-btn):not(.btn-close):not([class*="paginate"]):hover,
+input[type="button"]:not(.btn):hover,
+input[type="submit"]:not(.btn):hover,
+input[type="reset"]:not(.btn):hover {
+    background-color: var(--chardonay-primary-hover);
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+}
+
+button:not(.btn):not(.menu-toggle):not(.user-menu-btn):not(.btn-close):not([class*="paginate"]):active,
+input[type="button"]:not(.btn):active,
+input[type="submit"]:not(.btn):active,
+input[type="reset"]:not(.btn):active {
+    transform: translateY(0);
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Inputs nativos sin clase .form-control heredan Cormorant */
+input[type="text"]:not(.form-control):not(.dataTables_filter input),
+input[type="email"]:not(.form-control),
+input[type="password"]:not(.form-control),
+input[type="number"]:not(.form-control),
+input[type="search"]:not(.form-control),
+textarea:not(.form-control),
+select:not(.form-select):not(.form-control) {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    padding: 10px 16px;
+    border: 2px solid var(--chardonay-border);
+    border-radius: 6px;
+    background-color: var(--chardonay-input-bg);
+    color: var(--chardonay-text-primary);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    min-height: var(--height-input);
+}
+
+input[type="text"]:not(.form-control):focus,
+input[type="email"]:not(.form-control):focus,
+input[type="password"]:not(.form-control):focus,
+input[type="number"]:not(.form-control):focus,
+input[type="search"]:not(.form-control):focus,
+textarea:not(.form-control):focus,
+select:not(.form-select):not(.form-control):focus {
+    outline: none;
+    border-color: var(--chardonay-primary);
+    box-shadow: 0 0 0 3px rgba(107, 142, 110, 0.1);
+    background-color: var(--chardonay-input-focus);
+}
+
+/* Labels nativos sin clase */
+label:not(.form-label):not(.form-check-label) {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: var(--chardonay-text-primary);
+    letter-spacing: 0.3px;
+}
+
+/* ============================================
+   TABLES (FILAS COMPACTAS + AJUSTE CORMORANT)
+   ============================================ */
+.table {
+    background-color: var(--chardonay-bg-secondary);
+    color: var(--chardonay-text-primary);
+    margin-bottom: 0;
+    font-size: 0.875rem;
+    font-family: var(--font-ui);
+}
+
+.table thead {
+    background: linear-gradient(135deg, var(--chardonay-primary-hover) 0%, var(--chardonay-primary) 100%);
+}
+
+.table thead th {
+    border-bottom: none;
+    color: white;
+    font-weight: 600;
+    background-color: transparent;
+    padding: 0.75rem 0.875rem;
+    vertical-align: middle;
+    text-transform: uppercase;
+    font-size: 0.8125rem;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+.table tbody tr {
+    border-bottom: 1px solid var(--chardonay-border);
+    transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+/* Línea decorativa dorada en hover de filas */
+.table tbody tr::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--chardonay-secondary), transparent);
+    transform: scaleX(0);
+    transition: transform 300ms ease;
+}
+
+.table tbody tr:hover {
+    background-color: var(--chardonay-table-hover);
+}
+
+.table tbody tr:hover::after {
+    transform: scaleX(1);
+}
+
+.table tbody td {
+    padding: 0.625rem 0.875rem;
+    vertical-align: middle;
+    color: var(--chardonay-text-primary);
+    transition: color 250ms ease;
+    font-size: 0.875rem;
+    line-height: 1.4;
+}
+
+.table-responsive {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.table-striped tbody tr:nth-child(odd) {
+    background: var(--chardonay-bg-primary);
+}
+
+.table-striped tbody tr:nth-child(odd):hover {
+    background: var(--chardonay-table-hover);
+}
+
+/* Tablas nativas sin clase .table (del equipo de diseño) */
+table:not(.table):not(.dataTable) {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+    margin-bottom: 2rem;
+}
+
+table:not(.table):not(.dataTable) th {
+    background-color: var(--chardonay-bg-primary);
+    color: var(--chardonay-text-primary);
+    font-weight: 600;
+    padding: 14px 16px;
+    text-align: left;
+    border-bottom: 2px solid var(--chardonay-border);
+    letter-spacing: 0.3px;
+}
+
+table:not(.table):not(.dataTable) td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--chardonay-border);
+    min-height: var(--height-table-row);
+    vertical-align: middle;
+}
+
+table:not(.table):not(.dataTable) tr:hover {
+    background-color: var(--chardonay-table-hover);
+}
+
+/* ============================================
+   DATATABLES (COMPACTO)
+   ============================================ */
+
+/* Buscador unificado con inputs */
+.dataTables_wrapper .dataTables_filter input {
+    background-color: var(--chardonay-input-bg);
+    border: 1px solid var(--chardonay-border);
+    border-radius: 6px;
+    padding: 0 0.75rem;
+    height: var(--height-input);
+    color: var(--chardonay-text-primary);
+    font-size: 0.875rem;
+    font-family: var(--font-ui);
+    transition: all 250ms ease;
+}
+
+.dataTables_wrapper .dataTables_filter input:focus {
+    border-color: var(--chardonay-primary);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(107, 142, 110, 0.15);
+}
+
+/* Select unificado con inputs */
+.dataTables_wrapper .dataTables_length select {
+    background-color: var(--chardonay-input-bg);
+    border: 1px solid var(--chardonay-border);
+    border-radius: 6px;
+    padding: 0 2rem 0 0.75rem;
+    height: var(--height-input);
+    color: var(--chardonay-text-primary);
+    font-size: 0.875rem;
+    font-family: var(--font-ui);
+}
+
+/* Info text */
+.dataTables_wrapper .dataTables_info {
+    color: var(--chardonay-text-secondary);
+    font-size: 0.8125rem;
+    padding-top: 0.75rem;
+    font-family: var(--font-ui);
+}
+
+/* Label y filter spacing */
+.dataTables_wrapper .dataTables_filter,
+.dataTables_wrapper .dataTables_length {
+    font-size: 0.8125rem;
+    margin-bottom: 0.75rem;
+    font-family: var(--font-ui);
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    padding: 0.25rem 0.625rem;
+    margin: 0 0.125rem;
+    border-radius: 4px;
+    border: 1px solid var(--chardonay-border);
+    background-color: var(--chardonay-bg-secondary);
+    color: var(--chardonay-text-primary);
+    font-size: 0.8125rem;
+    font-family: var(--font-ui);
+    transition: all 200ms ease;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    background-color: var(--chardonay-table-hover);
+    border-color: var(--chardonay-border);
+    color: var(--chardonay-text-primary);
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+    background: linear-gradient(135deg, var(--chardonay-primary) 0%, var(--chardonay-primary-light) 100%);
+    border-color: var(--chardonay-primary);
+    color: white;
+}
+
+/* ============================================
+   FORMS (ALTURAS UNIFICADAS)
+   ============================================ */
+.form-control, .form-select {
+    background-color: var(--chardonay-input-bg);
+    border: 1px solid var(--chardonay-border);
+    border-radius: 8px;
+    color: var(--chardonay-text-primary);
+    transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
+    height: var(--height-input);
+    padding: 0 0.75rem;
+    font-size: 0.9rem;
+    font-family: var(--font-ui);
+    line-height: 1;
+}
+
+/* Textarea no debe tener height fijo */
+textarea.form-control {
+    height: auto;
+    padding: 0.5rem 0.75rem;
+    line-height: 1.5;
+    min-height: 100px;
+    resize: vertical;
+}
+
+.form-control:focus, .form-select:focus {
+    background-color: var(--chardonay-bg-secondary);
+    border-color: var(--chardonay-primary);
+    box-shadow: 0 0 0 3px rgba(107, 142, 110, 0.15);
+    outline: none;
+}
+
+.form-control::placeholder {
+    color: var(--chardonay-text-secondary);
+    font-size: 0.8125rem;
+}
+
+.form-label {
+    color: var(--chardonay-text-secondary);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8125rem;
+    font-family: var(--font-ui);
+    margin-bottom: 0.375rem;
+}
+
+.form-label i {
+    color: var(--chardonay-secondary);
+}
+
+.text-danger {
+    color: var(--chardonay-error) !important;
+}
+
+/* form-select con padding para la flecha */
+.form-select {
+    padding-right: 2.25rem;
+}
+
+/* ============================================
+   MODALS (ESTABLE + ANIMACIÓN Y SOMBRA)
+   ============================================ */
+.modal-content {
+    border-radius: 12px;
+    border: 1px solid var(--chardonay-border);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    animation: chardonayModalIn 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.modal-header {
+    background: linear-gradient(135deg, var(--chardonay-primary) 0%, var(--chardonay-primary-light) 100%);
+    color: white;
+    border-bottom: none;
+    border-radius: 12px 12px 0 0;
+    padding: 1.125rem 1.25rem;
+}
+
+.modal-header .modal-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.2rem;
+}
+
+.modal-header .btn-close {
+    opacity: 0.8;
+    filter: brightness(0) invert(1);
+    transition: opacity 200ms ease;
+}
+
+.modal-header .btn-close:hover {
+    opacity: 1;
+}
+
+.modal-body {
+    padding: 1.5rem 1.25rem;
+    background: var(--chardonay-bg-secondary);
+}
+
+.modal-footer {
+    border-top: 1px solid var(--chardonay-border);
+    background-color: var(--chardonay-bg-primary);
+    padding: 1rem 1.25rem;
+}
+
+/* ============================================
+   NUEVO: LISTAS - ESPACIADO ELEGANTE
+   (Del equipo de diseño)
+   ============================================ */
+ul, ol {
+    margin-bottom: 1.5rem;
+    padding-left: 2rem;
+}
+
+li {
+    margin-bottom: 0.5rem;
+    line-height: 1.7;
+    font-family: var(--font-display);
+}
+
+/* Reset para listas de navegación */
+.sidebar-nav,
+.sidebar-nav li,
+.pagination,
+.pagination li,
+.dropdown-menu,
+.dropdown-menu li,
+nav ul, nav ol,
+nav ul li, nav ol li {
+    margin-bottom: 0;
+    padding-left: 0;
+    font-family: var(--font-ui);
+}
+
+/* ============================================
+   NUEVO: CÓDIGO - TIPOGRAFÍA MONOESPACIADA
+   (Del equipo de diseño)
+   ============================================ */
+code {
+    font-family: 'Monaco', 'Courier New', monospace;
+    font-size: 0.85rem;
+    background-color: var(--chardonay-bg-primary);
+    color: var(--chardonay-error);
+    padding: 2px 6px;
+    border-radius: 3px;
+}
+
+pre {
+    background-color: var(--chardonay-bg-primary);
+    border: 1px solid var(--chardonay-border);
+    padding: 16px;
+    border-radius: 6px;
+    overflow-x: auto;
+    margin-bottom: 1.5rem;
+    font-family: 'Monaco', 'Courier New', monospace;
+    font-size: 0.85rem;
+}
+
+pre code {
+    background-color: transparent;
+    color: var(--chardonay-text-primary);
+    padding: 0;
+}
+
+/* ============================================
+   NUEVO: SEPARADORES ELEGANTES
+   (Del equipo de diseño)
+   ============================================ */
+hr {
+    border: none;
+    height: 1px;
+    background-color: var(--chardonay-border);
+    margin: 2rem 0;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-260px);
+    }
+
+    .sidebar.show {
+        transform: translateX(0);
+    }
+
+    .topbar {
+        left: 0;
+    }
+
+    .main-content {
+        margin-left: 0;
+    }
+
+    .sidebar-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.5);
+        z-index: 999;
+        display: none;
+    }
+
+    .sidebar-overlay.show {
+        display: block;
+    }
+
+    /* Ajustes visuales para móvil */
+    .card-body {
+        padding: 1rem;
+    }
+
+    .modal-body {
+        padding: 1.25rem;
+    }
+
+    /* Tipografía responsiva (intermedia entre ambos CSS) */
+    h1 {
+        font-size: 1.75rem;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+    }
+
+    h3 {
+        font-size: 1.25rem;
+    }
+
+    h4 {
+        font-size: 1.125rem;
+    }
+
+    p {
+        font-size: 0.95rem;
+    }
+
+    /* Tablas nativas en móvil */
+    table:not(.table):not(.dataTable) {
+        font-size: 0.85rem;
+    }
+
+    table:not(.table):not(.dataTable) th,
+    table:not(.table):not(.dataTable) td {
+        padding: 10px 12px;
+    }
+
+    /* Botones nativos en móvil */
+    button:not(.btn):not(.menu-toggle):not(.user-menu-btn):not(.btn-close):not([class*="paginate"]),
+    input[type="button"]:not(.btn),
+    input[type="submit"]:not(.btn),
+    input[type="reset"]:not(.btn) {
+        padding: 8px 18px;
+        min-height: 38px;
+    }
+}
+
+/* ============================================
+   UTILIDADES
+   ============================================ */
+.text-muted {
+    color: var(--chardonay-text-secondary) !important;
+}
+
+.bg-transparent {
+    background-color: transparent !important;
+}
+
+/* ============================================
+   ANIMACIONES
+   ============================================ */
+@keyframes chardonayModalIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes chardonayFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Animación sutil de entrada para cards */
+.card {
+    animation: chardonayFadeIn 500ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ============================================
+   BOTONES DE ACCIONES EN TABLAS
+   ============================================ */
+
+/* Botón Editar - Negro Elegante */
+.btn-editar {
+    background: linear-gradient(135deg, #2E2E2E 0%, #4A4A4A 100%) !important;
+    border-color: #2E2E2E !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.btn-editar:hover {
+    background: linear-gradient(135deg, #1A1A1A 0%, #3A3A3A 100%) !important;
+    border-color: #1A1A1A !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    transform: translateY(-1px);
+}
+
+.btn-editar:active {
+    background: linear-gradient(135deg, #111111 0%, #2E2E2E 100%) !important;
+    transform: translateY(0);
+}
+
+.btn-editar i {
+    color: #FFFFFF !important;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+}
+
+/* Botón Eliminar - Rojo */
+.btn-eliminar {
+    color: #FFFFFF !important;
+}
+
+.btn-eliminar i {
+    color: #FFFFFF !important;
+}
+
+/* ============================================
+   DATATABLES PAGINACIÓN ELEGANTE (COMPACTA)
+   ============================================ */
+
+/* Contenedor de paginación */
+.dataTables_wrapper .dataTables_paginate {
+    padding: 0.75rem 0 0.375rem;
+}
+
+.dataTables_wrapper .dataTables_paginate .pagination {
+    gap: 3px;
+}
+
+/* Todos los botones de paginación */
+.dataTables_wrapper .dataTables_paginate .page-item .page-link {
+    background: var(--chardonay-bg-secondary);
+    border: 1px solid var(--chardonay-border);
+    color: var(--chardonay-text-primary);
+    border-radius: 6px !important;
+    padding: 0 0.625rem;
+    height: var(--height-pagination);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+    font-size: 0.8125rem;
+    font-family: var(--font-ui);
+    transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow-xs);
+    min-width: 36px;
+    text-align: center;
+    line-height: 1;
+}
+
+/* Hover */
+.dataTables_wrapper .dataTables_paginate .page-item .page-link:hover {
+    background: linear-gradient(135deg, #2E2E2E 0%, #4A4A4A 100%);
+    border-color: #2E2E2E;
+    color: #FFFFFF;
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+    text-decoration: none;
+}
+
+/* Página activa */
+.dataTables_wrapper .dataTables_paginate .page-item.active .page-link {
+    background: linear-gradient(135deg, #1A1A1A 0%, #3A3A3A 100%);
+    border-color: #1A1A1A;
+    color: #FFFFFF;
+    font-weight: 700;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
+}
+
+.dataTables_wrapper .dataTables_paginate .page-item.active .page-link:hover {
+    background: linear-gradient(135deg, #111111 0%, #2E2E2E 100%);
+    transform: translateY(-1px);
+}
+
+/* Deshabilitado */
+.dataTables_wrapper .dataTables_paginate .page-item.disabled .page-link {
+    background: var(--chardonay-bg-primary);
+    border-color: var(--chardonay-border);
+    color: var(--chardonay-text-secondary);
+    opacity: 0.5;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+}
+
+.dataTables_wrapper .dataTables_paginate .page-item.disabled .page-link:hover {
+    background: var(--chardonay-bg-primary);
+    color: var(--chardonay-text-secondary);
+    transform: none;
+    box-shadow: none;
+}
+
+/* Botones Anterior y Siguiente */
+.dataTables_wrapper .dataTables_paginate .page-item.previous .page-link,
+.dataTables_wrapper .dataTables_paginate .page-item.next .page-link {
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    padding: 0 0.75rem;
+}
+
+/* Focus */
+.dataTables_wrapper .dataTables_paginate .page-item .page-link:focus {
+    box-shadow: 0 0 0 3px rgba(46, 46, 46, 0.2);
+    outline: none;
+}
+
+/* Quitar border-radius por defecto de Bootstrap */
+.dataTables_wrapper .dataTables_paginate .page-item:first-child .page-link,
+.dataTables_wrapper .dataTables_paginate .page-item:last-child .page-link {
+    border-radius: 6px !important;
+}
+
+/* ============================================
+   FIX: DATATABLES ALINEACIÓN CORRECTA
+   ============================================ */
+.dataTables_wrapper {
+    width: 100%;
+}
+
+/* Asegurar que la tabla no se descuadre */
+table.dataTable {
+    width: 100% !important;
+    border-collapse: collapse !important;
+}
+
+table.dataTable thead th,
+table.dataTable tbody td {
+    box-sizing: content-box;
+}
