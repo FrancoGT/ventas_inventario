@@ -6,11 +6,11 @@
     --chardonay-bg-primary: #F7F5F2;
     --chardonay-bg-secondary: #FFFFFF;
     --chardonay-border: #E6E1D8;
-    
+
     /* Colores de texto */
     --chardonay-text-primary: #2E2E2E;
     --chardonay-text-secondary: #6B6B6B;
-    
+
     /* Colores principales */
     --chardonay-primary: #6B8E6E;
     --chardonay-primary-hover: #5F7F63;
@@ -18,7 +18,7 @@
     --chardonay-secondary: #C2A76D;
     --chardonay-secondary-hover: #B49A63;
     --chardonay-secondary-light: #D4BC85;
-    
+
     /* Estados */
     --chardonay-success: #7FAF8A;
     --chardonay-success-light: #99C4A0;
@@ -27,7 +27,7 @@
     --chardonay-error: #B85C5C;
     --chardonay-error-hover: #A94E4E;
     --chardonay-error-light: #D07070;
-    
+
     /* Elementos de interfaz */
     --chardonay-table-hover: #F0ECE6;
     --chardonay-input-bg: #FAFAF8;
@@ -36,137 +36,110 @@
     --chardonay-sidebar-text: #3F3F3F;
     --chardonay-sidebar-active: #D8E3D5;
 
-    /* Sombras Elegantes */
+    /* Sombras */
     --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
     --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.08);
-    --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.10);
     --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.12);
     --shadow-xl: 0 12px 24px rgba(0, 0, 0, 0.15);
 
-    /* Alturas estándar unificadas */
-    --height-input: 42px;    /* ← Subido de 38px para Cormorant */
-    --height-btn: 42px;      /* ← Subido de 38px para Cormorant */
-    --height-btn-sm: 36px;   /* ← Subido de 34px */
-    --height-btn-icon: 34px; /* ← Subido de 32px */
-    --height-pagination: 36px; /* ← Subido de 34px */
-    --height-table-row: 44px;  /* ← Subido de 40px */
+    /* ─── Sistema de alturas unificado ───
+       Un solo token por nivel. Todos los controles
+       interactivos (input, select, btn) comparten
+       exactamente los mismos valores.             */
+    --h-control: 38px;   /* inputs, selects, btn principal */
+    --h-control-sm: 32px; /* botones de acción en tabla    */
+    --h-pagination: 34px; /* paginación DataTables         */
 
-    /* NUEVO: Tipografía dual (serif para headings, sans para UI) */
+    /* Radio de borde único en toda la UI */
+    --radius: 5px;
+    --radius-sm: 4px;
+    --radius-card: 6px;
+    --radius-modal: 8px;
+
+    /* Tipografía */
     --font-display: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
     --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+    /* Spacing scale */
+    --space-xs: 0.25rem;   /* 4px  */
+    --space-sm: 0.5rem;    /* 8px  */
+    --space-md: 1rem;      /* 16px */
+    --space-lg: 1.5rem;    /* 24px */
+    --space-xl: 2rem;      /* 32px */
 }
 
 /* ============================================
-   RESET Y CONFIGURACIÓN BASE
+   RESET Y BASE
    ============================================ */
-* {
+*, *::before, *::after {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-html {
-    scroll-behavior: smooth;
-}
+html { scroll-behavior: smooth; }
 
 body {
     background-color: var(--chardonay-bg-primary);
     color: var(--chardonay-text-primary);
-    /* UI usa sans-serif para legibilidad en tablas/forms */
     font-family: var(--font-ui);
-    line-height: 1.6;
     font-size: 14px;
+    line-height: 1.5;
 }
 
 /* ============================================
-   TIPOGRAFÍA ELEGANTE - CORMORANT GARAMOND
-   Headings usan serif, body/UI usan sans-serif
+   TIPOGRAFÍA
    ============================================ */
 h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display);
     color: var(--chardonay-text-primary);
-    font-weight: 600;
-}
-
-/* Escala tipográfica: intermedia entre estable y propuesto.
-   El propuesto era demasiado grande para una app (3.5rem h1),
-   el estable era demasiado pequeño para Cormorant. */
-h1 {
-    font-size: 2.25rem;
-    font-weight: 700;
-    letter-spacing: -0.8px;
-    line-height: 1.15;
-    margin-bottom: 1.25rem;
-}
-
-h2 {
-    font-size: 1.875rem;
-    font-weight: 700;
-    letter-spacing: -0.6px;
     line-height: 1.2;
-    margin-bottom: 1rem;
 }
 
-h3 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    letter-spacing: -0.4px;
-    line-height: 1.3;
-    margin-bottom: 0.875rem;
+/* Escala proporcional clara — cada nivel cede ~15% al superior */
+h1 { font-size: 2rem;    font-weight: 700; letter-spacing: -0.5px; margin-bottom: var(--space-md); }
+h2 { font-size: 1.625rem; font-weight: 700; letter-spacing: -0.4px; margin-bottom: var(--space-md); }
+h3 { font-size: 1.375rem; font-weight: 600; letter-spacing: -0.3px; margin-bottom: var(--space-sm); }
+h4 { font-size: 1.125rem; font-weight: 600; letter-spacing: -0.2px; margin-bottom: var(--space-sm); }
+h5 { font-size: 0.975rem; font-weight: 600; letter-spacing:  0;     margin-bottom: var(--space-xs); }
+h6 { font-size: 0.875rem; font-weight: 500; letter-spacing:  0;     margin-bottom: var(--space-xs); }
+
+/* h3 en el header del módulo (estructura real del HTML) */
+.container-fluid > .row > .col > h3 {
+    font-size: 1.375rem;
+    font-weight: 700;
+    margin-bottom: 0.125rem;
+    line-height: 1.2;
 }
 
-h4 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    letter-spacing: -0.3px;
-    line-height: 1.35;
-    margin-bottom: 0.75rem;
+.container-fluid > .row > .col > small {
+    font-size: 0.8rem;
+    color: var(--chardonay-text-secondary);
+    font-family: var(--font-ui);
+    font-weight: 400;
 }
 
-h5 {
-    font-size: 1.125rem;
-    font-weight: 500;
-    letter-spacing: -0.2px;
-    line-height: 1.4;
-    margin-bottom: 0.5rem;
-}
-
-h6 {
-    font-size: 1rem;
-    font-weight: 500;
-    letter-spacing: 0;
-    line-height: 1.4;
-    margin-bottom: 0.5rem;
-}
-
-/* NUEVO: Párrafos con Cormorant para contenido editorial */
 p {
     font-family: var(--font-display);
     font-size: 1rem;
-    line-height: 1.7;
-    margin-bottom: 1rem;
-    letter-spacing: 0.3px;
+    line-height: 1.65;
+    margin-bottom: var(--space-md);
 }
 
-/* NUEVO: Links globales elegantes */
 a {
     color: var(--chardonay-primary);
     text-decoration: none;
-    transition: color 0.3s ease;
+    transition: color 0.2s ease;
 }
-
-a:hover {
-    color: var(--chardonay-primary-hover);
-}
+a:hover { color: var(--chardonay-primary-hover); }
 
 /* ============================================
-   SIDEBAR (ESTABLE - SIN CAMBIOS)
-   Sidebar mantiene sans-serif para navegación
+   SIDEBAR
    ============================================ */
 .sidebar {
     position: fixed;
-    top: 0;
-    left: 0;
+    top: 0; left: 0;
     height: 100vh;
     width: 260px;
     background-color: var(--chardonay-sidebar-bg);
@@ -177,42 +150,34 @@ a:hover {
     border-right: 1px solid var(--chardonay-border);
 }
 
-.sidebar.collapsed {
-    transform: translateX(-260px);
-}
+.sidebar.collapsed { transform: translateX(-260px); }
 
 .sidebar-brand {
-    padding: 0 1.5rem 1.5rem;
-    /* MEJORA: Brand con Cormorant para elegancia */
+    padding: 0 1.5rem 1.25rem;
     font-family: var(--font-display);
-    font-size: 1.4rem;
+    font-size: 1.35rem;
     font-weight: 700;
     color: var(--chardonay-text-primary);
     border-bottom: 1px solid var(--chardonay-border);
-    margin-bottom: 1rem;
-    letter-spacing: -0.3px;
+    margin-bottom: var(--space-sm);
+    letter-spacing: -0.2px;
 }
 
-.sidebar-nav {
-    list-style: none;
-    padding: 0;
-}
+.sidebar-nav { list-style: none; padding: 0; }
 
-.sidebar-nav-item {
-    margin-bottom: 0.25rem;
-}
+.sidebar-nav-item { margin-bottom: 0.125rem; }
 
 .sidebar-nav-link {
     display: flex;
     align-items: center;
-    padding: 0.75rem 1.5rem;
+    padding: 0.6875rem 1.5rem;
     color: var(--chardonay-sidebar-text);
     text-decoration: none;
-    transition: all 0.2s ease;
+    transition: all 0.18s ease;
     border-left: 3px solid transparent;
-    /* Nav links mantienen sans-serif */
     font-family: var(--font-ui);
     font-size: 0.875rem;
+    font-weight: 400;
 }
 
 .sidebar-nav-link:hover {
@@ -225,225 +190,209 @@ a:hover {
     background-color: var(--chardonay-sidebar-active);
     border-left-color: var(--chardonay-primary);
     color: var(--chardonay-text-primary);
-    font-weight: 500;
+    font-weight: 600;
 }
 
 .sidebar-nav-link i {
-    width: 20px;
+    width: 18px;
     margin-right: 0.75rem;
     text-align: center;
+    font-size: 0.875rem;
+    flex-shrink: 0;
 }
 
 /* ============================================
-   TOPBAR (ESTABLE - SIN CAMBIOS)
+   TOPBAR
    ============================================ */
 .topbar {
     position: fixed;
-    top: 0;
-    left: 260px;
-    right: 0;
-    height: 60px;
+    top: 0; left: 260px; right: 0;
+    height: 56px;
     background-color: var(--chardonay-bg-secondary);
     border-bottom: 1px solid var(--chardonay-border);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 1.5rem;
+    padding: 0 1.25rem;
     transition: left 0.3s ease;
     z-index: 999;
+    box-shadow: var(--shadow-xs);
 }
 
-.topbar.full-width {
-    left: 0;
-}
+.topbar.full-width { left: 0; }
 
 .menu-toggle {
     background: none;
     border: none;
-    font-size: 1.25rem;
+    font-size: 1.125rem;
     color: var(--chardonay-text-primary);
     cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 4px;
-    transition: background-color 0.2s;
+    padding: 0.375rem 0.5rem;
+    border-radius: var(--radius-sm);
+    transition: background-color 0.18s;
+    line-height: 1;
 }
+.menu-toggle:hover { background-color: var(--chardonay-table-hover); }
 
-.menu-toggle:hover {
-    background-color: var(--chardonay-table-hover);
-}
-
-.user-dropdown {
-    position: relative;
-}
+.user-dropdown { position: relative; }
 
 .user-menu-btn {
     background: none;
     border: none;
     color: var(--chardonay-text-primary);
     cursor: pointer;
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    transition: background-color 0.2s;
+    padding: 0.375rem 0.875rem;
+    border-radius: var(--radius);
+    transition: background-color 0.18s;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.4375rem;
     font-family: var(--font-ui);
     font-size: 0.875rem;
+    font-weight: 500;
 }
-
-.user-menu-btn:hover {
-    background-color: var(--chardonay-table-hover);
-}
+.user-menu-btn:hover { background-color: var(--chardonay-table-hover); }
 
 .user-dropdown-menu {
     position: absolute;
-    top: 100%;
-    right: 0;
-    margin-top: 0.5rem;
+    top: 100%; right: 0;
+    margin-top: 0.375rem;
     background-color: var(--chardonay-bg-secondary);
     border: 1px solid var(--chardonay-border);
-    border-radius: 6px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    min-width: 200px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    min-width: 192px;
     display: none;
 }
-
-.user-dropdown-menu.show {
-    display: block;
-}
+.user-dropdown-menu.show { display: block; }
 
 .user-dropdown-item {
     display: block;
-    padding: 0.75rem 1rem;
+    padding: 0.625rem var(--space-md);
     color: var(--chardonay-text-primary);
     text-decoration: none;
-    transition: background-color 0.2s;
+    transition: background-color 0.15s;
     border-bottom: 1px solid var(--chardonay-border);
     font-family: var(--font-ui);
     font-size: 0.875rem;
 }
-
-.user-dropdown-item:last-child {
-    border-bottom: none;
-}
-
+.user-dropdown-item:last-child { border-bottom: none; }
 .user-dropdown-item:hover {
     background-color: var(--chardonay-table-hover);
     text-decoration: none;
 }
 
 /* ============================================
-   MAIN CONTENT (ESTABLE - SIN CAMBIOS)
+   MAIN CONTENT
    ============================================ */
 .main-content {
     margin-left: 260px;
-    margin-top: 60px;
-    padding: 2rem 2rem 2.5rem;
+    margin-top: 56px;                    /* = altura topbar */
+    padding: 1.75rem 1.75rem 2.5rem;
     transition: margin-left 0.3s ease;
-    min-height: calc(100vh - 60px);
+    min-height: calc(100vh - 56px);
+}
+.main-content.full-width { margin-left: 0; }
+
+/* ============================================
+   PAGE HEADER — estructura real del HTML:
+   .row.mb-3.align-items-center
+     .col > h3 + small
+     .col-auto > .btn
+   ============================================ */
+.container-fluid > .row.align-items-center {
+    margin-bottom: 1.25rem !important;  /* override mb-3 */
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--chardonay-border);
 }
 
-.main-content.full-width {
-    margin-left: 0;
+/* La acción primaria del header debe alinearse exactamente con el título */
+.container-fluid > .row.align-items-center > .col-auto {
+    display: flex;
+    align-items: center;
 }
 
 /* ============================================
-   ALERTS (ESTABLE + GRADIENTES ATRACTIVOS)
+   ALERTS
    ============================================ */
 .alert {
     background-color: var(--chardonay-bg-secondary);
     border: 1px solid var(--chardonay-border);
-    border-radius: 6px;
-    padding: 0.875rem 1.125rem;
-    font-weight: 500;
-    font-size: 0.9rem;
-    font-family: var(--font-display);
-    line-height: 1.6;
-    transition: all 250ms ease;
+    border-radius: var(--radius-card);
+    padding: 0.75rem var(--space-md);
+    font-size: 0.875rem;
+    font-family: var(--font-ui);
+    line-height: 1.5;
+    margin-bottom: var(--space-md);
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-sm);
 }
+.alert i { margin-top: 1px; flex-shrink: 0; }
 
 .alert-success {
-    background: linear-gradient(135deg, rgba(127, 175, 138, 0.12) 0%, rgba(127, 175, 138, 0.04) 100%);
-    border-left: 4px solid var(--chardonay-success);
+    background: linear-gradient(135deg, rgba(127,175,138,0.10) 0%, rgba(127,175,138,0.03) 100%);
+    border-left: 3px solid var(--chardonay-success);
     color: var(--chardonay-text-primary);
 }
-
-.alert-danger {
-    background: linear-gradient(135deg, rgba(184, 92, 92, 0.12) 0%, rgba(184, 92, 92, 0.04) 100%);
-    border-left: 4px solid var(--chardonay-error);
+.alert-danger, .alert-error {
+    background: linear-gradient(135deg, rgba(184,92,92,0.10) 0%, rgba(184,92,92,0.03) 100%);
+    border-left: 3px solid var(--chardonay-error);
     color: var(--chardonay-text-primary);
 }
-
-/* NUEVO: Clase .alert-error del equipo de diseño (alias) */
-.alert-error {
-    background: linear-gradient(135deg, rgba(184, 92, 92, 0.12) 0%, rgba(184, 92, 92, 0.04) 100%);
-    border-left: 4px solid var(--chardonay-error);
-    color: var(--chardonay-text-primary);
-}
-
 .alert-warning {
-    background: linear-gradient(135deg, rgba(209, 185, 122, 0.12) 0%, rgba(209, 185, 122, 0.04) 100%);
-    border-left: 4px solid var(--chardonay-warning);
+    background: linear-gradient(135deg, rgba(209,185,122,0.10) 0%, rgba(209,185,122,0.03) 100%);
+    border-left: 3px solid var(--chardonay-warning);
     color: var(--chardonay-text-primary);
 }
-
 .alert-info {
-    background: linear-gradient(135deg, rgba(6, 182, 212, 0.12) 0%, rgba(34, 211, 238, 0.04) 100%);
-    border-left: 4px solid #06B6D4;
+    background: linear-gradient(135deg, rgba(6,182,212,0.10) 0%, rgba(6,182,212,0.03) 100%);
+    border-left: 3px solid #06B6D4;
     color: var(--chardonay-text-primary);
 }
 
 /* ============================================
-   CARDS (ESTABLE + MEJORAS INTEGRADAS)
+   CARDS
    ============================================ */
 .card {
     background-color: var(--chardonay-bg-secondary);
     border: 1px solid var(--chardonay-border);
-    border-radius: 6px;
+    border-radius: var(--radius-card);
     box-shadow: var(--shadow-sm);
-    transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
     overflow: hidden;
     position: relative;
-    /* Padding reset - lo maneja card-body/header/footer */
     padding: 0;
-    margin-bottom: 2rem;
+    margin-bottom: var(--space-lg);
+    /* Sin animación lift en cards que contienen tablas — interfiere con UX */
+    transition: box-shadow 250ms ease;
 }
 
-/* Línea gradiente decorativa superior en hover */
+/* Línea decorativa superior en hover */
 .card::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
+    top: 0; left: 0; right: 0;
+    height: 2px;
     background: linear-gradient(90deg, var(--chardonay-secondary), var(--chardonay-primary), var(--chardonay-secondary));
     transform: scaleX(0);
     transform-origin: left;
-    transition: transform 400ms cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 350ms ease;
     z-index: 1;
 }
+.card:hover::before { transform: scaleX(1); }
+.card:hover { box-shadow: var(--shadow-md); }
 
-.card:hover::before {
-    transform: scaleX(1);
-}
-
-.card:hover {
-    box-shadow: var(--shadow-md);
-    transform: translateY(-2px);
-}
-
+/* Card header — estructura real: .card-header > h5 */
 .card-header {
-    background: linear-gradient(135deg, var(--chardonay-primary) 0%, var(--chardonay-primary-light) 100%);
+    background: linear-gradient(135deg, var(--chardonay-primary-hover) 0%, var(--chardonay-primary) 100%);
     color: white;
     border-bottom: none;
-    padding: 1.125rem 1.5rem;
-    font-weight: 600;
-    letter-spacing: 0.3px;
+    padding: 0.875rem 1.25rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 1rem;
+    gap: var(--space-md);
+    min-height: 48px;
 }
 
 .card-header h3,
@@ -451,280 +400,352 @@ a:hover {
 .card-header h5 {
     margin: 0;
     color: white;
-    font-weight: 700;
+    font-weight: 600;
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    font-size: 1.2rem;
+    gap: 0.5rem;
+    font-size: 0.9375rem;  /* 15px — proporcionado al card-header */
     font-family: var(--font-display);
-    letter-spacing: -0.2px;
+    letter-spacing: 0;
+    line-height: 1;
 }
 
-/* Acción principal en card-header: jerarquía clara respecto al título */
-.card-header .btn {
-    flex-shrink: 0;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-    font-weight: 700;
-    letter-spacing: 0.4px;
+.card-header h5 i {
+    font-size: 0.875rem;
+    opacity: 0.85;
 }
 
 .card-body {
-    padding: 1.5rem;
+    padding: 1.25rem;
     background: var(--chardonay-bg-secondary);
 }
 
-/* Cards densas (con tablas o métricas) */
+/* Cards con tabla: padding contenido para que la tabla respire */
 .card-body:has(.table),
 .card-body:has(.dataTables_wrapper) {
-    padding: 1.25rem 1.25rem 1rem;
+    padding: 1rem 1.125rem 0.75rem;
 }
 
 .card-footer {
-    background: linear-gradient(135deg, var(--chardonay-bg-primary) 0%, var(--chardonay-bg-secondary) 100%);
+    background: var(--chardonay-bg-primary);
     border-top: 1px solid var(--chardonay-border);
-    padding: 0.875rem 1.25rem;
-    transition: all 250ms ease;
+    padding: 0.75rem 1.25rem;
 }
 
-.card-footer:hover {
-    background: linear-gradient(135deg, var(--chardonay-bg-secondary) 0%, var(--chardonay-bg-primary) 100%);
-}
-
-/* Links dentro de card-footer */
-.card-footer a {
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--chardonay-primary);
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    letter-spacing: 0.3px;
-    transition: all 250ms ease;
-    font-family: var(--font-ui);
-}
-
-.card-footer a:hover {
-    color: var(--chardonay-secondary);
-    text-decoration: none;
-}
-
-.card-footer a i {
-    transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
-    font-size: 0.8rem;
-}
-
-.card-footer a:hover i {
-    transform: translateX(4px);
-}
-
-/* Dashboard Metric Cards - Iconos animados */
+/* Métrica cards del dashboard */
 .card .d-flex i {
-    opacity: 0.8;
-    transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+    opacity: 0.75;
+    transition: opacity 0.2s ease;
 }
-
-.card:hover .d-flex i {
-    opacity: 1;
-    transform: scale(1.15) rotate(5deg);
-    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
-}
+.card:hover .d-flex i { opacity: 1; }
 
 .card-body .text-muted {
     color: var(--chardonay-text-secondary) !important;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.8px;
+    letter-spacing: 0.7px;
     font-family: var(--font-ui);
 }
 
 .card-body .h3 {
-    font-size: 1.75rem;
+    font-size: 1.625rem;
     font-weight: 700;
     color: var(--chardonay-text-primary);
-    margin: 0.35rem 0 0 0;
+    margin: 0.25rem 0 0;
     font-family: var(--font-display);
 }
 
 /* ============================================
-   BUTTONS (ALTURAS ESTANDARIZADAS)
+   SISTEMA DE BOTONES
+   ─────────────────────────────────────────
+   Todos los controles comparten --h-control.
+   Los btn-sm de tabla comparten --h-control-sm.
+   Un solo radio --radius en todos.
    ============================================ */
 .btn {
-    border-radius: 6px;
+    /* Dimensiones */
+    height: var(--h-control);
+    padding: 0 1.125rem;
+    /* Forma */
+    border-radius: var(--radius);
+    border: 1px solid transparent;
+    /* Tipografía */
+    font-family: var(--font-ui);
+    font-size: 0.875rem;
     font-weight: 600;
-    cursor: pointer;
-    transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
-    letter-spacing: 0.3px;
-    box-shadow: var(--shadow-sm);
-    position: relative;
-    overflow: hidden;
-    height: var(--height-btn);
-    padding: 0 1.25rem;
-    font-size: 0.9rem;
-    font-family: var(--font-display);
+    letter-spacing: 0.2px;
+    /* Layout */
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
+    gap: 0.4375rem;
     line-height: 1;
+    white-space: nowrap;
+    /* Interacción */
+    cursor: pointer;
+    transition: all 200ms ease;
+    box-shadow: var(--shadow-xs);
+    position: relative;
+    overflow: hidden;
+    vertical-align: middle;
 }
 
-/* Efecto ripple al hacer click */
-.btn::before {
+/* Ripple */
+.btn::after {
     content: '';
     position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.2);
-    transform: translate(-50%, -50%);
-    transition: width 500ms, height 500ms;
-    z-index: 0;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.12);
+    opacity: 0;
+    transition: opacity 180ms ease;
 }
-
-.btn:active::before {
-    width: 300px;
-    height: 300px;
-}
-
-.btn > * {
-    position: relative;
-    z-index: 1;
-}
+.btn:active::after { opacity: 1; }
 
 .btn:hover {
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--shadow-sm);
     transform: translateY(-1px);
 }
-
-.btn:active {
-    transform: translateY(0);
+.btn:active { transform: translateY(0); box-shadow: none; }
+.btn:focus-visible {
+    outline: 2px solid var(--chardonay-primary);
+    outline-offset: 2px;
 }
-
 .btn:disabled {
-    opacity: 0.6;
+    opacity: 0.55;
     cursor: not-allowed;
     transform: none;
     box-shadow: none;
 }
 
-/* Botón pequeño */
+/* Tamaño pequeño — para acciones dentro de tabla */
 .btn-sm {
-    height: var(--height-btn-sm);
-    padding: 0 0.875rem;
-    font-size: 0.85rem;
-    border-radius: 5px;
-}
-
-.btn-primary {
-    background: linear-gradient(135deg, var(--chardonay-primary) 0%, var(--chardonay-primary-light) 100%);
-    border-color: var(--chardonay-primary);
-    color: white;
-}
-
-.btn-primary:hover {
-    background: linear-gradient(135deg, var(--chardonay-primary-hover) 0%, var(--chardonay-primary) 100%);
-    border-color: var(--chardonay-primary-hover);
-    color: white;
-}
-
-.btn-secondary {
-    background: linear-gradient(135deg, var(--chardonay-secondary) 0%, var(--chardonay-secondary-light) 100%);
-    border-color: var(--chardonay-secondary);
-    color: white;
-}
-
-.btn-secondary:hover {
-    background: linear-gradient(135deg, var(--chardonay-secondary-hover) 0%, var(--chardonay-secondary) 100%);
-    border-color: var(--chardonay-secondary-hover);
-    color: white;
-}
-
-.btn-danger {
-    background: linear-gradient(135deg, var(--chardonay-error) 0%, var(--chardonay-error-light) 100%);
-    border-color: var(--chardonay-error);
-    color: white;
-}
-
-.btn-danger:hover {
-    background: linear-gradient(135deg, var(--chardonay-error-hover) 0%, var(--chardonay-error) 100%);
-    border-color: var(--chardonay-error-hover);
-    color: white;
-}
-
-.btn-success {
-    background: linear-gradient(135deg, var(--chardonay-success) 0%, var(--chardonay-success-light) 100%);
-    border-color: var(--chardonay-success);
-    color: white;
-}
-
-.btn-success:hover {
-    background: linear-gradient(135deg, var(--chardonay-success-dark) 0%, var(--chardonay-success) 100%);
-    border-color: var(--chardonay-success-dark);
-    color: white;
-}
-
-.btn-outline-primary {
-    border: 2px solid var(--chardonay-primary);
-    color: var(--chardonay-primary);
-    background: transparent;
-    box-shadow: none;
-}
-
-.btn-outline-primary:hover {
-    background: var(--chardonay-primary);
-    color: white;
-}
-
-/* NUEVO: Botón outline genérico del equipo de diseño */
-.btn-outline {
-    background-color: transparent;
-    border: 2px solid var(--chardonay-primary);
-    color: var(--chardonay-primary);
-    box-shadow: none;
-}
-
-.btn-outline:hover {
-    background-color: var(--chardonay-primary);
-    color: white;
+    height: var(--h-control-sm);
+    padding: 0 0.75rem;
+    font-size: 0.8125rem;
+    border-radius: var(--radius-sm);
+    gap: 0.375rem;
 }
 
 /* Botón icon-only */
 .btn-icon {
-    width: var(--height-btn-icon);
-    height: var(--height-btn-icon);
+    width: var(--h-control-sm);
+    height: var(--h-control-sm);
     padding: 0;
-    display: inline-flex;
+    border-radius: var(--radius-sm);
+}
+
+/* ─── Variantes de color ─── */
+
+/* Primario — acción principal, máximo énfasis */
+.btn-primary {
+    background: linear-gradient(150deg, var(--chardonay-primary) 0%, var(--chardonay-primary-hover) 100%);
+    border-color: var(--chardonay-primary-hover);
+    color: #fff;
+}
+.btn-primary:hover {
+    background: linear-gradient(150deg, var(--chardonay-primary-hover) 0%, #547558 100%);
+    border-color: #547558;
+    color: #fff;
+}
+
+/* Secundario — acción complementaria, énfasis medio */
+.btn-secondary {
+    background: linear-gradient(150deg, var(--chardonay-secondary) 0%, var(--chardonay-secondary-hover) 100%);
+    border-color: var(--chardonay-secondary-hover);
+    color: #fff;
+}
+.btn-secondary:hover {
+    background: linear-gradient(150deg, var(--chardonay-secondary-hover) 0%, #A08958 100%);
+    border-color: #A08958;
+    color: #fff;
+}
+
+/* Danger — acción destructiva */
+.btn-danger {
+    background: linear-gradient(150deg, var(--chardonay-error) 0%, var(--chardonay-error-hover) 100%);
+    border-color: var(--chardonay-error-hover);
+    color: #fff;
+}
+.btn-danger:hover {
+    background: linear-gradient(150deg, var(--chardonay-error-hover) 0%, #964444 100%);
+    border-color: #964444;
+    color: #fff;
+}
+
+/* Success */
+.btn-success {
+    background: linear-gradient(150deg, var(--chardonay-success) 0%, var(--chardonay-success-dark) 100%);
+    border-color: var(--chardonay-success-dark);
+    color: #fff;
+}
+.btn-success:hover {
+    background: linear-gradient(150deg, var(--chardonay-success-dark) 0%, #5F9069 100%);
+    border-color: #5F9069;
+    color: #fff;
+}
+
+/* Outline primario */
+.btn-outline-primary {
+    background: transparent;
+    border: 1.5px solid var(--chardonay-primary);
+    color: var(--chardonay-primary);
+    box-shadow: none;
+}
+.btn-outline-primary:hover {
+    background: var(--chardonay-primary);
+    border-color: var(--chardonay-primary);
+    color: #fff;
+}
+
+/* Outline genérico */
+.btn-outline {
+    background: transparent;
+    border: 1.5px solid var(--chardonay-primary);
+    color: var(--chardonay-primary);
+    box-shadow: none;
+}
+.btn-outline:hover {
+    background: var(--chardonay-primary);
+    color: #fff;
+}
+
+/* ─── Botones de acciones en tabla ───
+   .btn-editar y .btn-eliminar vienen del backend
+   como HTML renderizado en la columna 'acciones'.
+   Se fuerza btn-sm encima de .btn para no duplicar.  */
+
+.btn-editar {
+    /* Hereda .btn — sólo agrega color negro elegante */
+    background: linear-gradient(150deg, #3A3A3A 0%, #2A2A2A 100%) !important;
+    border-color: #222 !important;
+    color: #fff !important;
+}
+.btn-editar:hover {
+    background: linear-gradient(150deg, #2A2A2A 0%, #1A1A1A 100%) !important;
+    border-color: #111 !important;
+    color: #fff !important;
+}
+.btn-editar i { color: #fff !important; }
+
+.btn-eliminar {
+    /* Hereda .btn — sólo confirma color rojo */
+    color: #fff !important;
+}
+.btn-eliminar i { color: #fff !important; }
+
+/* Grupo de acciones en celda: espacio suficiente para evitar
+   clics accidentales entre Editar y Eliminar              */
+.table td .d-flex,
+.table td .btn-group,
+.table td [class*="gap-"] {
+    display: flex !important;
     align-items: center;
-    justify-content: center;
-    border-radius: 6px;
+    gap: 0.5rem;        /* 8px — mínimo confortable entre acciones */
+    flex-wrap: nowrap;
 }
 
 /* ============================================
-   ESTILOS BASE PARA ELEMENTOS NATIVOS
-   (Del equipo de diseño - NO interfieren con clases Bootstrap)
-   Solo aplican a elementos sin clase específica
+   FORMULARIOS — inputs, selects, labels
+   Todos los controles: misma altura --h-control
    ============================================ */
+.form-control,
+.form-select {
+    background-color: var(--chardonay-input-bg);
+    border: 1px solid var(--chardonay-border);
+    border-radius: var(--radius);
+    color: var(--chardonay-text-primary);
+    height: var(--h-control);
+    padding: 0 0.75rem;
+    font-size: 0.875rem;
+    font-family: var(--font-ui);
+    line-height: 1;
+    transition: border-color 180ms ease, box-shadow 180ms ease;
+}
 
-/* Botones nativos sin clase .btn heredan Cormorant */
+textarea.form-control {
+    height: auto;
+    min-height: 96px;
+    padding: 0.5rem 0.75rem;
+    line-height: 1.5;
+    resize: vertical;
+}
+
+.form-control:focus,
+.form-select:focus {
+    background-color: var(--chardonay-bg-secondary);
+    border-color: var(--chardonay-primary);
+    box-shadow: 0 0 0 3px rgba(107, 142, 110, 0.14);
+    outline: none;
+}
+
+.form-control::placeholder {
+    color: var(--chardonay-text-secondary);
+    font-size: 0.8125rem;
+    opacity: 0.8;
+}
+
+.form-select { padding-right: 2.25rem; }
+
+.form-label {
+    color: var(--chardonay-text-secondary);
+    font-weight: 600;
+    font-size: 0.8125rem;
+    font-family: var(--font-ui);
+    margin-bottom: 0.3125rem;
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    line-height: 1;
+}
+.form-label i { color: var(--chardonay-secondary); font-size: 0.8125rem; }
+
+.text-danger { color: var(--chardonay-error) !important; }
+
+/* Inputs nativos sin clase */
+input[type="text"]:not(.form-control):not([class*="dataTables"]),
+input[type="email"]:not(.form-control),
+input[type="password"]:not(.form-control),
+input[type="number"]:not(.form-control),
+input[type="search"]:not(.form-control),
+textarea:not(.form-control),
+select:not(.form-select):not(.form-control) {
+    font-family: var(--font-ui);
+    font-size: 0.875rem;
+    padding: 0 0.75rem;
+    border: 1px solid var(--chardonay-border);
+    border-radius: var(--radius);
+    background-color: var(--chardonay-input-bg);
+    color: var(--chardonay-text-primary);
+    height: var(--h-control);
+    transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+
+input[type="text"]:not(.form-control):focus,
+input[type="email"]:not(.form-control):focus,
+input[type="password"]:not(.form-control):focus,
+input[type="number"]:not(.form-control):focus,
+input[type="search"]:not(.form-control):focus,
+select:not(.form-select):not(.form-control):focus {
+    outline: none;
+    border-color: var(--chardonay-primary);
+    box-shadow: 0 0 0 3px rgba(107, 142, 110, 0.14);
+}
+
+/* Botones nativos sin clase .btn */
 button:not(.btn):not(.menu-toggle):not(.user-menu-btn):not(.btn-close):not([class*="paginate"]),
 input[type="button"]:not(.btn),
 input[type="submit"]:not(.btn),
 input[type="reset"]:not(.btn) {
-    font-family: var(--font-display);
-    font-size: 1rem;
+    font-family: var(--font-ui);
+    font-size: 0.875rem;
     font-weight: 600;
-    letter-spacing: 0.5px;
-    padding: 10px 24px;
-    min-height: var(--height-btn);
-    border: none;
-    border-radius: 6px;
+    padding: 0 1.125rem;
+    height: var(--h-control);
+    border: 1px solid transparent;
+    border-radius: var(--radius);
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     background-color: var(--chardonay-primary);
     color: white;
 }
@@ -734,67 +755,22 @@ input[type="button"]:not(.btn):hover,
 input[type="submit"]:not(.btn):hover,
 input[type="reset"]:not(.btn):hover {
     background-color: var(--chardonay-primary-hover);
-    box-shadow: var(--shadow-lg);
-    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
 }
 
-button:not(.btn):not(.menu-toggle):not(.user-menu-btn):not(.btn-close):not([class*="paginate"]):active,
-input[type="button"]:not(.btn):active,
-input[type="submit"]:not(.btn):active,
-input[type="reset"]:not(.btn):active {
-    transform: translateY(0);
-}
+button:disabled { opacity: 0.55; cursor: not-allowed; }
 
-button:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-}
-
-/* Inputs nativos sin clase .form-control heredan Cormorant */
-input[type="text"]:not(.form-control):not(.dataTables_filter input),
-input[type="email"]:not(.form-control),
-input[type="password"]:not(.form-control),
-input[type="number"]:not(.form-control),
-input[type="search"]:not(.form-control),
-textarea:not(.form-control),
-select:not(.form-select):not(.form-control) {
-    font-family: var(--font-display);
-    font-size: 1rem;
-    padding: 10px 16px;
-    border: 2px solid var(--chardonay-border);
-    border-radius: 6px;
-    background-color: var(--chardonay-input-bg);
-    color: var(--chardonay-text-primary);
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    min-height: var(--height-input);
-}
-
-input[type="text"]:not(.form-control):focus,
-input[type="email"]:not(.form-control):focus,
-input[type="password"]:not(.form-control):focus,
-input[type="number"]:not(.form-control):focus,
-input[type="search"]:not(.form-control):focus,
-textarea:not(.form-control):focus,
-select:not(.form-select):not(.form-control):focus {
-    outline: none;
-    border-color: var(--chardonay-primary);
-    box-shadow: 0 0 0 3px rgba(107, 142, 110, 0.1);
-    background-color: var(--chardonay-input-focus);
-}
-
-/* Labels nativos sin clase */
 label:not(.form-label):not(.form-check-label) {
     display: block;
-    font-family: var(--font-display);
-    font-size: 0.95rem;
+    font-family: var(--font-ui);
+    font-size: 0.8125rem;
     font-weight: 500;
-    margin-bottom: 0.5rem;
-    color: var(--chardonay-text-primary);
-    letter-spacing: 0.3px;
+    margin-bottom: 0.3125rem;
+    color: var(--chardonay-text-secondary);
 }
 
 /* ============================================
-   TABLES (FILAS COMPACTAS + AJUSTE CORMORANT)
+   TABLA — .table dentro de DataTables Bootstrap5
    ============================================ */
 .table {
     background-color: var(--chardonay-bg-secondary);
@@ -802,819 +778,272 @@ label:not(.form-label):not(.form-check-label) {
     margin-bottom: 0;
     font-size: 0.875rem;
     font-family: var(--font-ui);
+    width: 100% !important;
 }
 
+/* Encabezado: capa visual claramente diferenciada */
 .table thead {
     background: linear-gradient(135deg, var(--chardonay-primary-hover) 0%, var(--chardonay-primary) 100%);
 }
 
 .table thead th {
-    border-bottom: none;
-    color: white;
+    color: #fff;
     font-weight: 700;
-    background-color: transparent;
-    padding: 0.875rem 1rem;
-    vertical-align: middle;
-    text-transform: uppercase;
     font-size: 0.75rem;
-    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    padding: 0.75rem 0.875rem;
+    vertical-align: middle;
     white-space: nowrap;
+    border-bottom: none;
+    background-color: transparent;
 }
 
+/* Filas de datos */
 .table tbody tr {
     border-bottom: 1px solid var(--chardonay-border);
-    transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-}
-
-/* Línea decorativa dorada en hover de filas */
-.table tbody tr::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, var(--chardonay-secondary), transparent);
-    transform: scaleX(0);
-    transition: transform 250ms ease;
+    transition: background-color 160ms ease;
 }
 
 .table tbody tr:hover {
     background-color: var(--chardonay-table-hover);
-    box-shadow: inset 0 0 0 9999px rgba(0,0,0,0.015);
-}
-
-.table tbody tr:hover::after {
-    transform: scaleX(1);
 }
 
 .table tbody td {
-    padding: 0.75rem 1rem;
+    padding: 0.625rem 0.875rem;
     vertical-align: middle;
-    color: var(--chardonay-text-primary);
-    transition: color 200ms ease;
     font-size: 0.875rem;
     line-height: 1.4;
 }
 
-.table-responsive {
-    border-radius: 6px;
-    overflow: hidden;
-    border: 1px solid var(--chardonay-border);
-    box-shadow: var(--shadow-sm);
-}
-
+/* Striped */
 .table-striped tbody tr:nth-child(odd) {
     background: var(--chardonay-bg-primary);
 }
-
 .table-striped tbody tr:nth-child(odd):hover {
     background: var(--chardonay-table-hover);
 }
 
-/* Tablas nativas sin clase .table (del equipo de diseño) */
+/* Contenedor responsive — sombra propia para que la tabla
+   tenga peso visual dentro del card-body              */
+.table-responsive {
+    border-radius: var(--radius);
+    overflow: hidden;
+}
+
+/* Tablas nativas sin clase .table */
 table:not(.table):not(.dataTable) {
     width: 100%;
     border-collapse: collapse;
-    font-family: var(--font-display);
-    font-size: 0.95rem;
-    margin-bottom: 2rem;
+    font-family: var(--font-ui);
+    font-size: 0.875rem;
+    margin-bottom: var(--space-xl);
 }
-
 table:not(.table):not(.dataTable) th {
     background-color: var(--chardonay-bg-primary);
     color: var(--chardonay-text-primary);
-    font-weight: 600;
-    padding: 14px 16px;
-    text-align: left;
+    font-weight: 700;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 0.75rem var(--space-md);
     border-bottom: 2px solid var(--chardonay-border);
-    letter-spacing: 0.3px;
 }
-
 table:not(.table):not(.dataTable) td {
-    padding: 14px 16px;
+    padding: 0.625rem var(--space-md);
     border-bottom: 1px solid var(--chardonay-border);
-    min-height: var(--height-table-row);
     vertical-align: middle;
 }
-
 table:not(.table):not(.dataTable) tr:hover {
     background-color: var(--chardonay-table-hover);
 }
 
 /* ============================================
-   DATATABLES (COMPACTO)
+   DATATABLES — toolbar y controles nativos
+   ─────────────────────────────────────────
+   Estructura generada por DataTables + BS5:
+     .dataTables_wrapper
+       .row                   ← toolbar
+         [col] .dataTables_length
+         [col] .dataTables_filter
+       .row > .col > table
+       .row                   ← footer
+         [col] .dataTables_info
+         [col] .dataTables_paginate
    ============================================ */
-
-/* Buscador unificado con inputs */
-.dataTables_wrapper .dataTables_filter input {
-    background-color: var(--chardonay-input-bg);
-    border: 1px solid var(--chardonay-border);
-    border-radius: 5px;
-    padding: 0 0.75rem;
-    height: var(--height-input);
-    color: var(--chardonay-text-primary);
-    font-size: 0.875rem;
-    font-family: var(--font-ui);
-    transition: all 200ms ease;
-    min-width: 220px;
+.dataTables_wrapper {
+    width: 100%;
 }
 
-.dataTables_wrapper .dataTables_filter input:focus {
-    border-color: var(--chardonay-primary);
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(107, 142, 110, 0.15);
-    background-color: var(--chardonay-bg-secondary);
-}
-
-/* Select unificado con inputs */
-.dataTables_wrapper .dataTables_length select {
-    background-color: var(--chardonay-input-bg);
-    border: 1px solid var(--chardonay-border);
-    border-radius: 5px;
-    padding: 0 2rem 0 0.75rem;
-    height: var(--height-input);
-    color: var(--chardonay-text-primary);
-    font-size: 0.875rem;
-    font-family: var(--font-ui);
-    transition: border-color 200ms ease;
-}
-
-.dataTables_wrapper .dataTables_length select:focus {
-    border-color: var(--chardonay-primary);
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(107, 142, 110, 0.15);
-}
-
-/* Info text */
-.dataTables_wrapper .dataTables_info {
-    color: var(--chardonay-text-secondary);
-    font-size: 0.8125rem;
-    padding-top: 0.875rem;
-    font-family: var(--font-ui);
-}
-
-/* Barra de herramientas: length a la izquierda, filter a la derecha */
-.dataTables_wrapper .dataTables_filter,
-.dataTables_wrapper .dataTables_length {
-    font-size: 0.8125rem;
-    margin-bottom: 1rem;
-    font-family: var(--font-ui);
+/* ── Toolbar: length + filter en la misma línea base ── */
+.dataTables_wrapper > .row:first-child {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    margin-bottom: 0.875rem;
+    gap: 0;
 }
 
-/* Labels inline */
-.dataTables_wrapper .dataTables_filter label,
+/* length a la izquierda */
+.dataTables_wrapper .dataTables_length {
+    font-family: var(--font-ui);
+    font-size: 0.8125rem;
+    color: var(--chardonay-text-secondary);
+}
+
 .dataTables_wrapper .dataTables_length label {
     display: flex;
     align-items: center;
     gap: 0.5rem;
     margin: 0;
-    color: var(--chardonay-text-secondary);
+    white-space: nowrap;
     font-weight: 500;
+    color: var(--chardonay-text-secondary);
+}
+
+/* filter a la derecha */
+.dataTables_wrapper .dataTables_filter {
+    font-family: var(--font-ui);
+    font-size: 0.8125rem;
+    text-align: right;
+}
+
+.dataTables_wrapper .dataTables_filter label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+    font-weight: 500;
+    color: var(--chardonay-text-secondary);
     white-space: nowrap;
 }
 
-.dataTables_wrapper .dataTables_paginate .paginate_button {
-    padding: 0.25rem 0.625rem;
-    margin: 0 0.125rem;
-    border-radius: 4px;
-    border: 1px solid var(--chardonay-border);
-    background-color: var(--chardonay-bg-secondary);
-    color: var(--chardonay-text-primary);
-    font-size: 0.8125rem;
-    font-family: var(--font-ui);
-    transition: all 200ms ease;
-}
-
-.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
-    background-color: var(--chardonay-table-hover);
-    border-color: var(--chardonay-border);
-    color: var(--chardonay-text-primary);
-}
-
-.dataTables_wrapper .dataTables_paginate .paginate_button.current {
-    background: linear-gradient(135deg, var(--chardonay-primary) 0%, var(--chardonay-primary-light) 100%);
-    border-color: var(--chardonay-primary);
-    color: white;
-}
-
-/* ============================================
-   FORMS (ALTURAS UNIFICADAS)
-   ============================================ */
-.form-control, .form-select {
+/* Input de búsqueda y select de registros:
+   misma altura --h-control que todos los demás controles */
+.dataTables_wrapper .dataTables_filter input[type="search"],
+.dataTables_wrapper .dataTables_filter input {
+    height: var(--h-control);
     background-color: var(--chardonay-input-bg);
     border: 1px solid var(--chardonay-border);
-    border-radius: 5px;
-    color: var(--chardonay-text-primary);
-    transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
-    height: var(--height-input);
+    border-radius: var(--radius);
     padding: 0 0.75rem;
-    font-size: 0.9rem;
+    font-size: 0.875rem;
     font-family: var(--font-ui);
+    color: var(--chardonay-text-primary);
+    min-width: 200px;
+    transition: border-color 180ms ease, box-shadow 180ms ease;
+    /* Eliminar estilos de Bootstrap que rompen la altura */
     line-height: 1;
 }
 
-/* Textarea no debe tener height fijo */
-textarea.form-control {
-    height: auto;
-    padding: 0.5rem 0.75rem;
-    line-height: 1.5;
-    min-height: 100px;
-    resize: vertical;
+.dataTables_wrapper .dataTables_filter input:focus {
+    border-color: var(--chardonay-primary);
+    box-shadow: 0 0 0 3px rgba(107, 142, 110, 0.14);
+    outline: none;
+    background-color: var(--chardonay-bg-secondary);
 }
 
-.form-control:focus, .form-select:focus {
-    background-color: var(--chardonay-bg-secondary);
+.dataTables_wrapper .dataTables_length select {
+    height: var(--h-control);
+    background-color: var(--chardonay-input-bg);
+    border: 1px solid var(--chardonay-border);
+    border-radius: var(--radius);
+    padding: 0 2rem 0 0.75rem;
+    font-size: 0.875rem;
+    font-family: var(--font-ui);
+    color: var(--chardonay-text-primary);
+    line-height: 1;
+    transition: border-color 180ms ease;
+    cursor: pointer;
+}
+
+.dataTables_wrapper .dataTables_length select:focus {
     border-color: var(--chardonay-primary);
-    box-shadow: 0 0 0 3px rgba(107, 142, 110, 0.15);
+    box-shadow: 0 0 0 3px rgba(107, 142, 110, 0.14);
     outline: none;
 }
 
-.form-control::placeholder {
+/* Info text */
+.dataTables_wrapper .dataTables_info {
     color: var(--chardonay-text-secondary);
-    font-size: 0.8125rem;
-}
-
-.form-label {
-    color: var(--chardonay-text-secondary);
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.8125rem;
+    font-size: 0.8rem;
     font-family: var(--font-ui);
-    margin-bottom: 0.375rem;
-}
-
-.form-label i {
-    color: var(--chardonay-secondary);
-}
-
-.text-danger {
-    color: var(--chardonay-error) !important;
-}
-
-/* form-select con padding para la flecha */
-.form-select {
-    padding-right: 2.25rem;
-}
-
-/* ============================================
-   MODALS (ESTABLE + ANIMACIÓN Y SOMBRA)
-   ============================================ */
-.modal-content {
-    border-radius: 8px;
-    border: 1px solid var(--chardonay-border);
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
-    overflow: hidden;
-    animation: chardonayModalIn 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.modal-header {
-    background: linear-gradient(135deg, var(--chardonay-primary) 0%, var(--chardonay-primary-light) 100%);
-    color: white;
-    border-bottom: none;
-    border-radius: 8px 8px 0 0;
-    padding: 1.125rem 1.5rem;
-}
-
-.modal-header .modal-title {
-    font-family: var(--font-display);
-    font-weight: 700;
+    padding-top: 0.75rem;
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    font-size: 1.2rem;
 }
 
-.modal-header .btn-close {
-    opacity: 0.8;
-    filter: brightness(0) invert(1);
-    transition: opacity 200ms ease;
-}
-
-.modal-header .btn-close:hover {
-    opacity: 1;
-}
-
-.modal-body {
-    padding: 1.5rem 1.25rem;
-    background: var(--chardonay-bg-secondary);
-}
-
-.modal-footer {
-    border-top: 1px solid var(--chardonay-border);
-    background-color: var(--chardonay-bg-primary);
-    padding: 1rem 1.25rem;
-}
-
-/* ============================================
-   NUEVO: LISTAS - ESPACIADO ELEGANTE
-   (Del equipo de diseño)
-   ============================================ */
-ul, ol {
-    margin-bottom: 1.5rem;
-    padding-left: 2rem;
-}
-
-li {
-    margin-bottom: 0.5rem;
-    line-height: 1.7;
-    font-family: var(--font-display);
-}
-
-/* Reset para listas de navegación */
-.sidebar-nav,
-.sidebar-nav li,
-.pagination,
-.pagination li,
-.dropdown-menu,
-.dropdown-menu li,
-nav ul, nav ol,
-nav ul li, nav ol li {
-    margin-bottom: 0;
-    padding-left: 0;
-    font-family: var(--font-ui);
-}
-
-/* ============================================
-   NUEVO: CÓDIGO - TIPOGRAFÍA MONOESPACIADA
-   (Del equipo de diseño)
-   ============================================ */
-code {
-    font-family: 'Monaco', 'Courier New', monospace;
-    font-size: 0.85rem;
-    background-color: var(--chardonay-bg-primary);
-    color: var(--chardonay-error);
-    padding: 2px 6px;
-    border-radius: 3px;
-}
-
-pre {
-    background-color: var(--chardonay-bg-primary);
-    border: 1px solid var(--chardonay-border);
-    padding: 16px;
-    border-radius: 6px;
-    overflow-x: auto;
-    margin-bottom: 1.5rem;
-    font-family: 'Monaco', 'Courier New', monospace;
-    font-size: 0.85rem;
-}
-
-pre code {
-    background-color: transparent;
-    color: var(--chardonay-text-primary);
-    padding: 0;
-}
-
-/* ============================================
-   NUEVO: SEPARADORES ELEGANTES
-   (Del equipo de diseño)
-   ============================================ */
-hr {
-    border: none;
-    height: 1px;
-    background-color: var(--chardonay-border);
-    margin: 2rem 0;
-}
-
-/* ============================================
-   RESPONSIVE
-   ============================================ */
-@media (max-width: 768px) {
-    .sidebar {
-        transform: translateX(-260px);
-    }
-
-    .sidebar.show {
-        transform: translateX(0);
-    }
-
-    .topbar {
-        left: 0;
-    }
-
-    .main-content {
-        margin-left: 0;
-        padding: 1.25rem 1rem;
-    }
-
-    .sidebar-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0,0,0,0.5);
-        z-index: 999;
-        display: none;
-    }
-
-    .sidebar-overlay.show {
-        display: block;
-    }
-
-    /* Ajustes visuales para móvil */
-    .card-body {
-        padding: 1.125rem;
-    }
-
-    .modal-body {
-        padding: 1.25rem;
-    }
-
-    /* Tipografía responsiva (intermedia entre ambos CSS) */
-    h1 {
-        font-size: 1.75rem;
-    }
-
-    h2 {
-        font-size: 1.5rem;
-    }
-
-    h3 {
-        font-size: 1.25rem;
-    }
-
-    h4 {
-        font-size: 1.125rem;
-    }
-
-    p {
-        font-size: 0.95rem;
-    }
-
-    /* Tablas nativas en móvil */
-    table:not(.table):not(.dataTable) {
-        font-size: 0.85rem;
-    }
-
-    table:not(.table):not(.dataTable) th,
-    table:not(.table):not(.dataTable) td {
-        padding: 10px 12px;
-    }
-
-    /* Botones nativos en móvil */
-    button:not(.btn):not(.menu-toggle):not(.user-menu-btn):not(.btn-close):not([class*="paginate"]),
-    input[type="button"]:not(.btn),
-    input[type="submit"]:not(.btn),
-    input[type="reset"]:not(.btn) {
-        padding: 8px 18px;
-        min-height: 38px;
-    }
-}
-
-/* ============================================
-   JERARQUÍA DE VISTA - PAGE HEADER
-   Encabezado de módulo con protagonismo claro
-   ============================================ */
-
-/* Bloque de encabezado de módulo */
-.page-header,
-.module-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    margin-bottom: 2rem;
-    padding-bottom: 1.25rem;
-    border-bottom: 1px solid var(--chardonay-border);
-}
-
-.page-header h1,
-.page-header h2,
-.page-header h3,
-.module-header h1,
-.module-header h2,
-.module-header h3 {
-    margin-bottom: 0;
-    line-height: 1.1;
-}
-
-/* Acción principal del header: visualmente dominante */
-.page-header .btn-primary,
-.module-header .btn-primary {
-    flex-shrink: 0;
-    font-weight: 700;
-    letter-spacing: 0.4px;
-    box-shadow: var(--shadow-md);
-}
-
-/* ============================================
-   BARRA DE FILTROS / TOOLBAR
-   Organización: búsqueda izquierda, filtros/acciones derecha
-   ============================================ */
-
-.filter-toolbar {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 1.5rem;
-    padding: 0.875rem 1rem;
-    background: var(--chardonay-bg-primary);
-    border: 1px solid var(--chardonay-border);
-    border-radius: 6px;
-}
-
-/* Zona de búsqueda a la izquierda */
-.filter-toolbar .filter-search {
-    flex: 1;
-    min-width: 200px;
-    max-width: 360px;
-}
-
-/* Separador visual entre grupos de filtros */
-.filter-toolbar .filter-divider {
-    width: 1px;
-    height: 24px;
-    background-color: var(--chardonay-border);
-    flex-shrink: 0;
-}
-
-/* Filtros adicionales y acciones secundarias a la derecha */
-.filter-toolbar .filter-actions {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-left: auto;
-}
-
-/* Inputs, selects y botones dentro del toolbar: altura uniforme */
-.filter-toolbar .form-control,
-.filter-toolbar .form-select,
-.filter-toolbar .btn {
-    height: var(--height-input);
-}
-
-/* Botón "Limpiar filtros" como acción secundaria */
-.filter-toolbar .btn-clear,
-.filter-toolbar .btn-link {
-    color: var(--chardonay-text-secondary);
-    font-size: 0.8125rem;
-    font-weight: 500;
-    padding: 0 0.625rem;
-    height: var(--height-input);
-    border: 1px solid transparent;
-    background: transparent;
-    box-shadow: none;
-    transition: all 200ms ease;
-}
-
-.filter-toolbar .btn-clear:hover,
-.filter-toolbar .btn-link:hover {
-    color: var(--chardonay-text-primary);
-    background: var(--chardonay-bg-secondary);
-    border-color: var(--chardonay-border);
-    transform: none;
-    box-shadow: none;
-}
-
-/* ============================================
-   SEPARACIÓN ENTRE SECCIONES PRINCIPALES
-   Ritmo vertical: header → filtros → tabla
-   ============================================ */
-
-/* Separación entre bloques principales de la vista */
-.section-gap {
-    margin-bottom: 2rem;
-}
-
-.section-gap-lg {
-    margin-bottom: 2.5rem;
-}
-
-/* Card que contiene tabla: sin padding superior redundante cuando hay filtros arriba */
-.card + .card,
-.filter-toolbar + .card {
-    margin-top: 0;
-}
-
-/* ============================================
-   UTILIDADES
-   ============================================ */
-.text-muted {
-    color: var(--chardonay-text-secondary) !important;
-}
-
-.bg-transparent {
-    background-color: transparent !important;
-}
-
-/* ============================================
-   ANIMACIONES
-   ============================================ */
-@keyframes chardonayModalIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes chardonayFadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-/* Animación sutil de entrada para cards */
-.card {
-    animation: chardonayFadeIn 500ms cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* ============================================
-   BOTONES DE ACCIONES EN TABLAS
-   ============================================ */
-
-/* Botón Editar - Negro Elegante */
-.btn-editar {
-    background: linear-gradient(135deg, #2E2E2E 0%, #4A4A4A 100%) !important;
-    border-color: #2E2E2E !important;
-    color: #FFFFFF !important;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
-    height: var(--height-btn-sm) !important;
-    min-width: 80px;
-    font-size: 0.8125rem !important;
-    border-radius: 5px !important;
-}
-
-.btn-editar:hover {
-    background: linear-gradient(135deg, #1A1A1A 0%, #3A3A3A 100%) !important;
-    border-color: #1A1A1A !important;
-    color: #FFFFFF !important;
-    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
-    transform: translateY(-1px);
-}
-
-.btn-editar:active {
-    background: linear-gradient(135deg, #111111 0%, #2E2E2E 100%) !important;
-    transform: translateY(0);
-}
-
-.btn-editar i {
-    color: #FFFFFF !important;
-    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
-}
-
-/* Botón Eliminar - Rojo */
-.btn-eliminar {
-    color: #FFFFFF !important;
-    height: var(--height-btn-sm) !important;
-    min-width: 80px;
-    font-size: 0.8125rem !important;
-    border-radius: 5px !important;
-    box-shadow: 0 1px 3px rgba(184, 92, 92, 0.3);
-}
-
-.btn-eliminar:hover {
-    box-shadow: 0 3px 7px rgba(184, 92, 92, 0.4);
-    transform: translateY(-1px);
-}
-
-.btn-eliminar:active {
-    transform: translateY(0);
-}
-
-.btn-eliminar i {
-    color: #FFFFFF !important;
-}
-
-/* Grupo de acciones en tabla — alineación y espaciado uniformes */
-.table tbody td .d-flex,
-.table tbody td [class*="gap-"],
-.table td .btn-group {
-    align-items: center;
-    gap: 0.375rem;
-}
-
-/* ============================================
-   DATATABLES PAGINACIÓN ELEGANTE (COMPACTA)
-   ============================================ */
-
-/* Contenedor de paginación */
+/* ── Paginación ── */
 .dataTables_wrapper .dataTables_paginate {
-    padding: 0.75rem 0 0.375rem;
+    padding-top: 0.5rem;
 }
 
 .dataTables_wrapper .dataTables_paginate .pagination {
     gap: 3px;
+    margin: 0;
+    flex-wrap: nowrap;
 }
 
-/* Todos los botones de paginación */
 .dataTables_wrapper .dataTables_paginate .page-item .page-link {
+    height: var(--h-pagination);
+    min-width: 34px;
+    padding: 0 0.5625rem;
     background: var(--chardonay-bg-secondary);
     border: 1px solid var(--chardonay-border);
+    border-radius: var(--radius-sm) !important;
     color: var(--chardonay-text-primary);
-    border-radius: 5px !important;
-    padding: 0 0.625rem;
-    height: var(--height-pagination);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    font-family: var(--font-ui);
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-weight: 500;
-    font-size: 0.8125rem;
-    font-family: var(--font-ui);
-    transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: var(--shadow-xs);
-    min-width: 36px;
-    text-align: center;
     line-height: 1;
+    transition: all 180ms ease;
+    box-shadow: none;
 }
 
-/* Hover */
 .dataTables_wrapper .dataTables_paginate .page-item .page-link:hover {
     background: linear-gradient(135deg, #2E2E2E 0%, #4A4A4A 100%);
     border-color: #2E2E2E;
-    color: #FFFFFF;
-    box-shadow: var(--shadow-md);
-    transform: translateY(-1px);
+    color: #fff;
     text-decoration: none;
+    transform: none;
 }
 
-/* Página activa */
 .dataTables_wrapper .dataTables_paginate .page-item.active .page-link {
     background: linear-gradient(135deg, #1A1A1A 0%, #3A3A3A 100%);
     border-color: #1A1A1A;
-    color: #FFFFFF;
+    color: #fff;
     font-weight: 700;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
+    box-shadow: var(--shadow-sm);
 }
 
-.dataTables_wrapper .dataTables_paginate .page-item.active .page-link:hover {
-    background: linear-gradient(135deg, #111111 0%, #2E2E2E 100%);
-    transform: translateY(-1px);
-}
-
-/* Deshabilitado */
 .dataTables_wrapper .dataTables_paginate .page-item.disabled .page-link {
     background: var(--chardonay-bg-primary);
     border-color: var(--chardonay-border);
     color: var(--chardonay-text-secondary);
     opacity: 0.5;
     cursor: not-allowed;
-    box-shadow: none;
-    transform: none;
 }
 
-.dataTables_wrapper .dataTables_paginate .page-item.disabled .page-link:hover {
-    background: var(--chardonay-bg-primary);
-    color: var(--chardonay-text-secondary);
-    transform: none;
-    box-shadow: none;
-}
-
-/* Botones Anterior y Siguiente */
 .dataTables_wrapper .dataTables_paginate .page-item.previous .page-link,
 .dataTables_wrapper .dataTables_paginate .page-item.next .page-link {
-    font-weight: 600;
-    letter-spacing: 0.3px;
     padding: 0 0.75rem;
+    font-weight: 600;
 }
 
-/* Focus */
 .dataTables_wrapper .dataTables_paginate .page-item .page-link:focus {
-    box-shadow: 0 0 0 3px rgba(46, 46, 46, 0.2);
+    box-shadow: 0 0 0 2px rgba(46, 46, 46, 0.2);
     outline: none;
 }
 
-/* Quitar border-radius por defecto de Bootstrap */
+/* Anular border-radius de Bootstrap en first/last */
 .dataTables_wrapper .dataTables_paginate .page-item:first-child .page-link,
 .dataTables_wrapper .dataTables_paginate .page-item:last-child .page-link {
-    border-radius: 5px !important;
+    border-radius: var(--radius-sm) !important;
 }
 
-/* ============================================
-   FIX: DATATABLES ALINEACIÓN CORRECTA
-   ============================================ */
-.dataTables_wrapper {
-    width: 100%;
-}
-
-/* Toolbar row: length a la izquierda, filtros y acciones a la derecha */
-.dataTables_wrapper > .row:first-child {
-    display: flex;
-    align-items: center;
-    margin-bottom: 0.25rem;
-    gap: 0;
-}
-
-.dataTables_wrapper > .row:first-child > [class*="col"]:first-child {
-    flex: 0 0 auto;
-}
-
-.dataTables_wrapper > .row:first-child > [class*="col"]:last-child {
-    flex: 1;
-    display: flex;
-    justify-content: flex-end;
-}
-
-/* Asegurar que la tabla no se descuadre */
+/* Alinear tabla DataTables correctamente */
 table.dataTable {
     width: 100% !important;
     border-collapse: collapse !important;
@@ -1623,4 +1052,168 @@ table.dataTable {
 table.dataTable thead th,
 table.dataTable tbody td {
     box-sizing: content-box;
+}
+
+/* ============================================
+   MODALS
+   ============================================ */
+.modal-content {
+    border-radius: var(--radius-modal);
+    border: 1px solid var(--chardonay-border);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.18);
+    overflow: hidden;
+    animation: chardonayModalIn 360ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.modal-header {
+    background: linear-gradient(135deg, var(--chardonay-primary) 0%, var(--chardonay-primary-light) 100%);
+    color: white;
+    border-bottom: none;
+    border-radius: var(--radius-modal) var(--radius-modal) 0 0;
+    padding: 0.875rem 1.25rem;
+    min-height: 52px;
+    display: flex;
+    align-items: center;
+}
+
+.modal-header .modal-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.0625rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    line-height: 1;
+}
+
+.modal-header .btn-close {
+    opacity: 0.8;
+    filter: brightness(0) invert(1);
+    transition: opacity 180ms ease;
+}
+.modal-header .btn-close:hover { opacity: 1; }
+
+.modal-body {
+    padding: 1.25rem;
+    background: var(--chardonay-bg-secondary);
+}
+
+/* mb-3 dentro del modal: espaciado uniforme entre campos */
+.modal-body .mb-3 { margin-bottom: 1rem !important; }
+
+.modal-footer {
+    border-top: 1px solid var(--chardonay-border);
+    background-color: var(--chardonay-bg-primary);
+    padding: 0.75rem 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.5rem;
+}
+
+/* Botones en modal footer: misma altura, alineados */
+.modal-footer .btn { height: var(--h-control); }
+
+/* ============================================
+   ANIMACIONES
+   ============================================ */
+@keyframes chardonayModalIn {
+    from { opacity: 0; transform: translateY(16px) scale(0.98); }
+    to   { opacity: 1; transform: translateY(0)   scale(1);    }
+}
+
+@keyframes chardonayFadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+.card { animation: chardonayFadeIn 400ms ease; }
+
+/* ============================================
+   MISCELÁNEA
+   ============================================ */
+code {
+    font-family: 'Monaco', 'Courier New', monospace;
+    font-size: 0.84rem;
+    background-color: var(--chardonay-bg-primary);
+    color: var(--chardonay-error);
+    padding: 2px 5px;
+    border-radius: var(--radius-sm);
+}
+
+pre {
+    background-color: var(--chardonay-bg-primary);
+    border: 1px solid var(--chardonay-border);
+    padding: var(--space-md);
+    border-radius: var(--radius-card);
+    overflow-x: auto;
+    margin-bottom: var(--space-lg);
+    font-family: 'Monaco', 'Courier New', monospace;
+    font-size: 0.84rem;
+}
+pre code { background: transparent; color: var(--chardonay-text-primary); padding: 0; }
+
+hr {
+    border: none;
+    height: 1px;
+    background-color: var(--chardonay-border);
+    margin: var(--space-xl) 0;
+}
+
+ul, ol { margin-bottom: var(--space-lg); padding-left: var(--space-xl); }
+li { margin-bottom: var(--space-xs); line-height: 1.65; font-family: var(--font-display); }
+
+/* Reset para listas de navegación */
+.sidebar-nav, .sidebar-nav li,
+.pagination, .pagination li,
+.dropdown-menu, .dropdown-menu li,
+nav ul, nav ol, nav ul li, nav ol li {
+    margin-bottom: 0;
+    padding-left: 0;
+    font-family: var(--font-ui);
+}
+
+.text-muted { color: var(--chardonay-text-secondary) !important; }
+.bg-transparent { background-color: transparent !important; }
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+    .sidebar { transform: translateX(-260px); }
+    .sidebar.show { transform: translateX(0); }
+
+    .topbar { left: 0; }
+
+    .main-content {
+        margin-left: 0;
+        padding: 1.125rem 1rem 2rem;
+    }
+
+    .sidebar-overlay {
+        position: fixed;
+        inset: 0;
+        background-color: rgba(0, 0, 0, 0.45);
+        z-index: 999;
+        display: none;
+    }
+    .sidebar-overlay.show { display: block; }
+
+    .card-body { padding: 1rem; }
+    .modal-body { padding: 1rem; }
+
+    h1 { font-size: 1.625rem; }
+    h2 { font-size: 1.375rem; }
+    h3 { font-size: 1.125rem; }
+    h4 { font-size: 1rem; }
+
+    .container-fluid > .row > .col > h3 { font-size: 1.125rem; }
+
+    table:not(.table):not(.dataTable) {
+        font-size: 0.8125rem;
+    }
+    table:not(.table):not(.dataTable) th,
+    table:not(.table):not(.dataTable) td {
+        padding: 0.5rem 0.75rem;
+    }
 }
