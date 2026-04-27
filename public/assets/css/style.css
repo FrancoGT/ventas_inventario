@@ -338,7 +338,7 @@ a:hover {
 .main-content {
     margin-left: 260px;
     margin-top: 60px;
-    padding: 1.5rem;
+    padding: 2rem 2rem 2.5rem;
     transition: margin-left 0.3s ease;
     min-height: calc(100vh - 60px);
 }
@@ -353,7 +353,7 @@ a:hover {
 .alert {
     background-color: var(--chardonay-bg-secondary);
     border: 1px solid var(--chardonay-border);
-    border-radius: 8px;
+    border-radius: 6px;
     padding: 0.875rem 1.125rem;
     font-weight: 500;
     font-size: 0.9rem;
@@ -399,14 +399,14 @@ a:hover {
 .card {
     background-color: var(--chardonay-bg-secondary);
     border: 1px solid var(--chardonay-border);
-    border-radius: 10px;
+    border-radius: 6px;
     box-shadow: var(--shadow-sm);
     transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
     overflow: hidden;
     position: relative;
     /* Padding reset - lo maneja card-body/header/footer */
     padding: 0;
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
 }
 
 /* Línea gradiente decorativa superior en hover */
@@ -429,17 +429,21 @@ a:hover {
 }
 
 .card:hover {
-    box-shadow: var(--shadow-lg);
-    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
 }
 
 .card-header {
     background: linear-gradient(135deg, var(--chardonay-primary) 0%, var(--chardonay-primary-light) 100%);
     color: white;
     border-bottom: none;
-    padding: 1rem 1.25rem;
+    padding: 1.125rem 1.5rem;
     font-weight: 600;
     letter-spacing: 0.3px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
 }
 
 .card-header h3,
@@ -447,23 +451,32 @@ a:hover {
 .card-header h5 {
     margin: 0;
     color: white;
-    font-weight: 600;
+    font-weight: 700;
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    font-size: 1.05rem;
+    font-size: 1.2rem;
     font-family: var(--font-display);
+    letter-spacing: -0.2px;
+}
+
+/* Acción principal en card-header: jerarquía clara respecto al título */
+.card-header .btn {
+    flex-shrink: 0;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    font-weight: 700;
+    letter-spacing: 0.4px;
 }
 
 .card-body {
-    padding: 1.25rem;
+    padding: 1.5rem;
     background: var(--chardonay-bg-secondary);
 }
 
 /* Cards densas (con tablas o métricas) */
 .card-body:has(.table),
 .card-body:has(.dataTables_wrapper) {
-    padding: 1rem;
+    padding: 1.25rem 1.25rem 1rem;
 }
 
 .card-footer {
@@ -539,7 +552,7 @@ a:hover {
    BUTTONS (ALTURAS ESTANDARIZADAS)
    ============================================ */
 .btn {
-    border-radius: 8px;
+    border-radius: 6px;
     font-weight: 600;
     cursor: pointer;
     transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
@@ -604,7 +617,7 @@ a:hover {
     height: var(--height-btn-sm);
     padding: 0 0.875rem;
     font-size: 0.85rem;
-    border-radius: 6px;
+    border-radius: 5px;
 }
 
 .btn-primary {
@@ -798,19 +811,19 @@ label:not(.form-label):not(.form-check-label) {
 .table thead th {
     border-bottom: none;
     color: white;
-    font-weight: 600;
+    font-weight: 700;
     background-color: transparent;
-    padding: 0.75rem 0.875rem;
+    padding: 0.875rem 1rem;
     vertical-align: middle;
     text-transform: uppercase;
-    font-size: 0.8125rem;
-    letter-spacing: 0.5px;
+    font-size: 0.75rem;
+    letter-spacing: 0.8px;
     white-space: nowrap;
 }
 
 .table tbody tr {
     border-bottom: 1px solid var(--chardonay-border);
-    transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
 }
 
@@ -824,11 +837,12 @@ label:not(.form-label):not(.form-check-label) {
     height: 2px;
     background: linear-gradient(90deg, transparent, var(--chardonay-secondary), transparent);
     transform: scaleX(0);
-    transition: transform 300ms ease;
+    transition: transform 250ms ease;
 }
 
 .table tbody tr:hover {
     background-color: var(--chardonay-table-hover);
+    box-shadow: inset 0 0 0 9999px rgba(0,0,0,0.015);
 }
 
 .table tbody tr:hover::after {
@@ -836,17 +850,19 @@ label:not(.form-label):not(.form-check-label) {
 }
 
 .table tbody td {
-    padding: 0.625rem 0.875rem;
+    padding: 0.75rem 1rem;
     vertical-align: middle;
     color: var(--chardonay-text-primary);
-    transition: color 250ms ease;
+    transition: color 200ms ease;
     font-size: 0.875rem;
     line-height: 1.4;
 }
 
 .table-responsive {
-    border-radius: 8px;
+    border-radius: 6px;
     overflow: hidden;
+    border: 1px solid var(--chardonay-border);
+    box-shadow: var(--shadow-sm);
 }
 
 .table-striped tbody tr:nth-child(odd) {
@@ -895,47 +911,71 @@ table:not(.table):not(.dataTable) tr:hover {
 .dataTables_wrapper .dataTables_filter input {
     background-color: var(--chardonay-input-bg);
     border: 1px solid var(--chardonay-border);
-    border-radius: 6px;
+    border-radius: 5px;
     padding: 0 0.75rem;
     height: var(--height-input);
     color: var(--chardonay-text-primary);
     font-size: 0.875rem;
     font-family: var(--font-ui);
-    transition: all 250ms ease;
+    transition: all 200ms ease;
+    min-width: 220px;
 }
 
 .dataTables_wrapper .dataTables_filter input:focus {
     border-color: var(--chardonay-primary);
     outline: none;
     box-shadow: 0 0 0 3px rgba(107, 142, 110, 0.15);
+    background-color: var(--chardonay-bg-secondary);
 }
 
 /* Select unificado con inputs */
 .dataTables_wrapper .dataTables_length select {
     background-color: var(--chardonay-input-bg);
     border: 1px solid var(--chardonay-border);
-    border-radius: 6px;
+    border-radius: 5px;
     padding: 0 2rem 0 0.75rem;
     height: var(--height-input);
     color: var(--chardonay-text-primary);
     font-size: 0.875rem;
     font-family: var(--font-ui);
+    transition: border-color 200ms ease;
+}
+
+.dataTables_wrapper .dataTables_length select:focus {
+    border-color: var(--chardonay-primary);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(107, 142, 110, 0.15);
 }
 
 /* Info text */
 .dataTables_wrapper .dataTables_info {
     color: var(--chardonay-text-secondary);
     font-size: 0.8125rem;
-    padding-top: 0.75rem;
+    padding-top: 0.875rem;
     font-family: var(--font-ui);
 }
 
-/* Label y filter spacing */
+/* Barra de herramientas: length a la izquierda, filter a la derecha */
 .dataTables_wrapper .dataTables_filter,
 .dataTables_wrapper .dataTables_length {
     font-size: 0.8125rem;
-    margin-bottom: 0.75rem;
+    margin-bottom: 1rem;
     font-family: var(--font-ui);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Labels inline */
+.dataTables_wrapper .dataTables_filter label,
+.dataTables_wrapper .dataTables_length label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+    color: var(--chardonay-text-secondary);
+    font-weight: 500;
+    white-space: nowrap;
 }
 
 .dataTables_wrapper .dataTables_paginate .paginate_button {
@@ -968,9 +1008,9 @@ table:not(.table):not(.dataTable) tr:hover {
 .form-control, .form-select {
     background-color: var(--chardonay-input-bg);
     border: 1px solid var(--chardonay-border);
-    border-radius: 8px;
+    border-radius: 5px;
     color: var(--chardonay-text-primary);
-    transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
     height: var(--height-input);
     padding: 0 0.75rem;
     font-size: 0.9rem;
@@ -1027,7 +1067,7 @@ textarea.form-control {
    MODALS (ESTABLE + ANIMACIÓN Y SOMBRA)
    ============================================ */
 .modal-content {
-    border-radius: 12px;
+    border-radius: 8px;
     border: 1px solid var(--chardonay-border);
     box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
     overflow: hidden;
@@ -1038,8 +1078,8 @@ textarea.form-control {
     background: linear-gradient(135deg, var(--chardonay-primary) 0%, var(--chardonay-primary-light) 100%);
     color: white;
     border-bottom: none;
-    border-radius: 12px 12px 0 0;
-    padding: 1.125rem 1.25rem;
+    border-radius: 8px 8px 0 0;
+    padding: 1.125rem 1.5rem;
 }
 
 .modal-header .modal-title {
@@ -1160,6 +1200,7 @@ hr {
 
     .main-content {
         margin-left: 0;
+        padding: 1.25rem 1rem;
     }
 
     .sidebar-overlay {
@@ -1179,7 +1220,7 @@ hr {
 
     /* Ajustes visuales para móvil */
     .card-body {
-        padding: 1rem;
+        padding: 1.125rem;
     }
 
     .modal-body {
@@ -1228,6 +1269,131 @@ hr {
 }
 
 /* ============================================
+   JERARQUÍA DE VISTA - PAGE HEADER
+   Encabezado de módulo con protagonismo claro
+   ============================================ */
+
+/* Bloque de encabezado de módulo */
+.page-header,
+.module-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--chardonay-border);
+}
+
+.page-header h1,
+.page-header h2,
+.page-header h3,
+.module-header h1,
+.module-header h2,
+.module-header h3 {
+    margin-bottom: 0;
+    line-height: 1.1;
+}
+
+/* Acción principal del header: visualmente dominante */
+.page-header .btn-primary,
+.module-header .btn-primary {
+    flex-shrink: 0;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    box-shadow: var(--shadow-md);
+}
+
+/* ============================================
+   BARRA DE FILTROS / TOOLBAR
+   Organización: búsqueda izquierda, filtros/acciones derecha
+   ============================================ */
+
+.filter-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    padding: 0.875rem 1rem;
+    background: var(--chardonay-bg-primary);
+    border: 1px solid var(--chardonay-border);
+    border-radius: 6px;
+}
+
+/* Zona de búsqueda a la izquierda */
+.filter-toolbar .filter-search {
+    flex: 1;
+    min-width: 200px;
+    max-width: 360px;
+}
+
+/* Separador visual entre grupos de filtros */
+.filter-toolbar .filter-divider {
+    width: 1px;
+    height: 24px;
+    background-color: var(--chardonay-border);
+    flex-shrink: 0;
+}
+
+/* Filtros adicionales y acciones secundarias a la derecha */
+.filter-toolbar .filter-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-left: auto;
+}
+
+/* Inputs, selects y botones dentro del toolbar: altura uniforme */
+.filter-toolbar .form-control,
+.filter-toolbar .form-select,
+.filter-toolbar .btn {
+    height: var(--height-input);
+}
+
+/* Botón "Limpiar filtros" como acción secundaria */
+.filter-toolbar .btn-clear,
+.filter-toolbar .btn-link {
+    color: var(--chardonay-text-secondary);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    padding: 0 0.625rem;
+    height: var(--height-input);
+    border: 1px solid transparent;
+    background: transparent;
+    box-shadow: none;
+    transition: all 200ms ease;
+}
+
+.filter-toolbar .btn-clear:hover,
+.filter-toolbar .btn-link:hover {
+    color: var(--chardonay-text-primary);
+    background: var(--chardonay-bg-secondary);
+    border-color: var(--chardonay-border);
+    transform: none;
+    box-shadow: none;
+}
+
+/* ============================================
+   SEPARACIÓN ENTRE SECCIONES PRINCIPALES
+   Ritmo vertical: header → filtros → tabla
+   ============================================ */
+
+/* Separación entre bloques principales de la vista */
+.section-gap {
+    margin-bottom: 2rem;
+}
+
+.section-gap-lg {
+    margin-bottom: 2.5rem;
+}
+
+/* Card que contiene tabla: sin padding superior redundante cuando hay filtros arriba */
+.card + .card,
+.filter-toolbar + .card {
+    margin-top: 0;
+}
+
+/* ============================================
    UTILIDADES
    ============================================ */
 .text-muted {
@@ -1271,14 +1437,18 @@ hr {
     background: linear-gradient(135deg, #2E2E2E 0%, #4A4A4A 100%) !important;
     border-color: #2E2E2E !important;
     color: #FFFFFF !important;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+    height: var(--height-btn-sm) !important;
+    min-width: 80px;
+    font-size: 0.8125rem !important;
+    border-radius: 5px !important;
 }
 
 .btn-editar:hover {
     background: linear-gradient(135deg, #1A1A1A 0%, #3A3A3A 100%) !important;
     border-color: #1A1A1A !important;
     color: #FFFFFF !important;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
     transform: translateY(-1px);
 }
 
@@ -1295,10 +1465,32 @@ hr {
 /* Botón Eliminar - Rojo */
 .btn-eliminar {
     color: #FFFFFF !important;
+    height: var(--height-btn-sm) !important;
+    min-width: 80px;
+    font-size: 0.8125rem !important;
+    border-radius: 5px !important;
+    box-shadow: 0 1px 3px rgba(184, 92, 92, 0.3);
+}
+
+.btn-eliminar:hover {
+    box-shadow: 0 3px 7px rgba(184, 92, 92, 0.4);
+    transform: translateY(-1px);
+}
+
+.btn-eliminar:active {
+    transform: translateY(0);
 }
 
 .btn-eliminar i {
     color: #FFFFFF !important;
+}
+
+/* Grupo de acciones en tabla — alineación y espaciado uniformes */
+.table tbody td .d-flex,
+.table tbody td [class*="gap-"],
+.table td .btn-group {
+    align-items: center;
+    gap: 0.375rem;
 }
 
 /* ============================================
@@ -1319,7 +1511,7 @@ hr {
     background: var(--chardonay-bg-secondary);
     border: 1px solid var(--chardonay-border);
     color: var(--chardonay-text-primary);
-    border-radius: 6px !important;
+    border-radius: 5px !important;
     padding: 0 0.625rem;
     height: var(--height-pagination);
     display: inline-flex;
@@ -1328,7 +1520,7 @@ hr {
     font-weight: 500;
     font-size: 0.8125rem;
     font-family: var(--font-ui);
-    transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: var(--shadow-xs);
     min-width: 36px;
     text-align: center;
@@ -1394,7 +1586,7 @@ hr {
 /* Quitar border-radius por defecto de Bootstrap */
 .dataTables_wrapper .dataTables_paginate .page-item:first-child .page-link,
 .dataTables_wrapper .dataTables_paginate .page-item:last-child .page-link {
-    border-radius: 6px !important;
+    border-radius: 5px !important;
 }
 
 /* ============================================
@@ -1402,6 +1594,24 @@ hr {
    ============================================ */
 .dataTables_wrapper {
     width: 100%;
+}
+
+/* Toolbar row: length a la izquierda, filtros y acciones a la derecha */
+.dataTables_wrapper > .row:first-child {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.25rem;
+    gap: 0;
+}
+
+.dataTables_wrapper > .row:first-child > [class*="col"]:first-child {
+    flex: 0 0 auto;
+}
+
+.dataTables_wrapper > .row:first-child > [class*="col"]:last-child {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
 }
 
 /* Asegurar que la tabla no se descuadre */
