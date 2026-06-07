@@ -102,32 +102,33 @@ class EgresoController extends BaseController
         $id = (int) $this->request->getPost('id_egreso');
 
         if ($id <= 0) {
-            return $this->jsonError('ID no válido');
-        }
-
-        $egreso = $this->egresoModel->where('id_egreso', $id)
-                                    ->where('status', 1)
-                                    ->first();
-
-        if (!$egreso) {
-            return $this->jsonError('Egreso no encontrado');
+            return $this->jsonError('ID de egreso no recibido.');
         }
 
         if (!$this->validarEgreso()) {
             return $this->jsonError(implode(', ', $this->validator->getErrors()));
         }
 
-        $actualizado = $this->egresoModel->update($id, [
+        $data = [
             'compra_mercaderia' => $this->request->getPost('compra_mercaderia'),
             'flete'             => $this->request->getPost('flete'),
             'descripcion'       => $this->request->getPost('descripcion') ?? '',
-        ]);
+        ];
 
-        if (!$actualizado) {
-            return $this->jsonError('No se pudo actualizar el egreso.');
+        try {
+            $actualizado = $this->egresoModel
+                ->where('id_egreso', $id)
+                ->set($data)
+                ->update();
+
+            if (!$actualizado) {
+                return $this->jsonError('No se pudo actualizar el egreso.');
+            }
+
+            return $this->jsonSuccess('Egreso actualizado correctamente.');
+        } catch (\Throwable $e) {
+            return $this->jsonError('Error real al actualizar: ' . $e->getMessage());
         }
-
-        return $this->jsonSuccess('Egreso actualizado correctamente.');
     }
 
     public function eliminar()
