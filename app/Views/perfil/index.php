@@ -16,10 +16,6 @@
 
                 <div class="card-body text-center py-5">
 
-                    <div class="mb-4">
-                        <i class="fas fa-user-lock fa-4x text-muted"></i>
-                    </div>
-
                     <h4 class="mb-3">
                         Funcionalidad no disponible
                     </h4>
