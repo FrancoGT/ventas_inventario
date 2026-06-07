@@ -28,7 +28,7 @@
                         <tr>
                             <th>ID</th>
                             <th>Fecha</th>
-                            <th>Prendas</th>
+                            <th>Cantidad</th>
                             <th>Total (S/)</th>
                             <th width="100">Acciones</th>
                         </tr>
