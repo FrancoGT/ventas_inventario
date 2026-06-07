@@ -1374,3 +1374,19 @@ nav ul, nav ol, nav ul li, nav ol li {
     }
     .filtros-bloque .filtro-grupo { min-width: 100%; }
 }
+
+.btn-warning {
+    background-color: #2B3340 !important;
+    border-color: #212830 !important;
+    color: #fff !important;
+}
+
+.btn-warning:hover {
+    background-color: #1C232C !important;
+    border-color: #141A22 !important;
+    color: #fff !important;
+}
+
+.btn-warning i {
+    color: #fff !important;
+}
