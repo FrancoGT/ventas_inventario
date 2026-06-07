@@ -82,4 +82,80 @@ class EgresoController extends BaseController
 
         return $this->jsonSuccess('Egreso registrado correctamente.', ['id' => $id]);
     }
+    public function obtener()
+    {
+        if (!$this->request->isAJAX()) {
+            return $this->jsonError('Acceso no permitido', 403);
+        }
+
+        $id = $this->request->getPost('id_egreso');
+
+        if (!$id) {
+            return $this->jsonError('ID no válido');
+        }
+
+        $egreso = $this->egresoModel->find($id);
+
+        if (!$egreso) {
+            return $this->jsonError('Egreso no encontrado');
+        }
+
+        return $this->jsonSuccess('Egreso encontrado', [
+            'egreso' => $egreso
+        ]);
+    }
+
+    public function actualizar()
+    {
+        if (!$this->request->isAJAX()) {
+            return $this->jsonError('Acceso no permitido', 403);
+        }
+
+        $id = $this->request->getPost('id_egreso');
+
+        if (!$id) {
+            return $this->jsonError('ID no válido');
+        }
+
+        $rules = [
+            'compra_mercaderia' => 'required|numeric|greater_than_equal_to[0]',
+            'flete'             => 'required|numeric|greater_than_equal_to[0]',
+            'descripcion'       => 'permit_empty|max_length[500]',
+        ];
+
+        if (!$this->validate($rules)) {
+            return $this->jsonError(implode(', ', $this->validator->getErrors()));
+        }
+
+        $this->egresoModel->update($id, [
+            'compra_mercaderia' => $this->request->getPost('compra_mercaderia'),
+            'flete'             => $this->request->getPost('flete'),
+            'descripcion'       => $this->request->getPost('descripcion'),
+        ]);
+
+        return $this->jsonSuccess('Egreso actualizado correctamente.');
+    }
+
+    public function eliminar()
+    {
+        if (!$this->request->isAJAX()) {
+            return $this->jsonError('Acceso no permitido', 403);
+        }
+
+        $id = $this->request->getPost('id_egreso');
+
+        if (!$id) {
+            return $this->jsonError('ID no válido');
+        }
+
+        $egreso = $this->egresoModel->find($id);
+
+        if (!$egreso) {
+            return $this->jsonError('Egreso no encontrado');
+        }
+
+        $this->egresoModel->delete($id);
+
+        return $this->jsonSuccess('Egreso eliminado correctamente.');
+    }
 }

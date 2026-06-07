@@ -2,7 +2,6 @@
 
 <?= $this->section('content') ?>
 <div class="container-fluid">
-    <!-- Header -->
     <div class="row mb-3 align-items-center">
         <div class="col">
             <h3><i class="fas fa-money-bill-wave"></i> Egresos</h3>
@@ -15,7 +14,6 @@
         </div>
     </div>
 
-    <!-- Tabla -->
     <div class="card">
         <div class="card-header">
             <h5><i class="fas fa-list"></i> Listado de Egresos</h5>
@@ -30,6 +28,7 @@
                             <th>Compra Mercadería (S/)</th>
                             <th>Flete (S/)</th>
                             <th>Descripción</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody></tbody>
@@ -39,7 +38,6 @@
     </div>
 </div>
 
-<!-- Modal -->
 <div class="modal fade" id="modalEgreso" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -49,9 +47,11 @@
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-            <form id="formEgreso">
-                <div class="modal-body">
 
+            <form id="formEgreso">
+                <input type="hidden" id="id_egreso" name="id_egreso">
+
+                <div class="modal-body">
                     <div class="mb-3">
                         <label for="compra_mercaderia" class="form-label">
                             <i class="fas fa-shopping-cart"></i> Compra Mercadería (S/) <span class="text-danger">*</span>
@@ -97,6 +97,7 @@
                         <small>Todos los campos marcados con (*) son obligatorios</small>
                     </div>
                 </div>
+
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                         <i class="fas fa-times"></i> Cancelar
@@ -119,7 +120,6 @@ let modalEgreso;
 $(document).ready(function () {
     modalEgreso = new bootstrap.Modal(document.getElementById('modalEgreso'));
 
-    // ── DataTable ──────────────────────────────────────────────────────────────
     tabla = $('#tablaEgresos').DataTable({
         processing: true,
         ajax: {
@@ -128,8 +128,8 @@ $(document).ready(function () {
             dataSrc: 'data'
         },
         columns: [
-            { data: 'id_egreso',          width: '60px',  className: 'text-center' },
-            { data: 'fecha',              width: '120px', className: 'text-center' },
+            { data: 'id_egreso', width: '60px', className: 'text-center' },
+            { data: 'fecha', width: '120px', className: 'text-center' },
             {
                 data: 'compra_mercaderia',
                 width: '160px',
@@ -149,47 +149,64 @@ $(document).ready(function () {
                 }
             },
             { data: 'descripcion', orderable: false },
+            {
+                data: null,
+                width: '130px',
+                className: 'text-center',
+                orderable: false,
+                render: function (data, type, row) {
+                    return `
+                        <button class="btn btn-warning btn-sm btnEditar" data-id="${row.id_egreso}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-danger btn-sm btnEliminar" data-id="${row.id_egreso}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    `;
+                }
+            }
         ],
         order: [[0, 'desc']],
         autoWidth: false,
         scrollX: false,
         language: {
-            processing:   "Procesando...",
-            search:       "Buscar:",
-            lengthMenu:   "Mostrar _MENU_ registros",
-            info:         "Mostrando _START_ a _END_ de _TOTAL_ registros",
-            infoEmpty:    "Mostrando 0 a 0 de 0 registros",
+            processing: "Procesando...",
+            search: "Buscar:",
+            lengthMenu: "Mostrar _MENU_ registros",
+            info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
+            infoEmpty: "Mostrando 0 a 0 de 0 registros",
             infoFiltered: "(filtrado de _MAX_ registros totales)",
             loadingRecords: "Cargando...",
-            zeroRecords:  "No se encontraron registros",
-            emptyTable:   "No hay egresos registrados",
+            zeroRecords: "No se encontraron registros",
+            emptyTable: "No hay egresos registrados",
             paginate: {
-                first:    "Primero",
+                first: "Primero",
                 previous: "Anterior",
-                next:     "Siguiente",
-                last:     "Último"
+                next: "Siguiente",
+                last: "Último"
             }
         },
         pageLength: 10
     });
 
-    // ── Abrir modal nuevo ──────────────────────────────────────────────────────
     $('#btnNuevo').on('click', function () {
         limpiarFormulario();
-        $('#modalEgresoTitulo').html('<i class="fas fa-plus"></i> Nuevo Egreso');
         modalEgreso.show();
     });
 
-    // ── Submit formulario ──────────────────────────────────────────────────────
     $('#formEgreso').on('submit', function (e) {
         e.preventDefault();
 
+        const id = $('#id_egreso').val();
         const btnGuardar = $('#btnGuardar');
+
         btnGuardar.prop('disabled', true)
                   .html('<i class="fas fa-spinner fa-spin"></i> Guardando...');
 
         $.ajax({
-            url: '<?= base_url('egresos/guardar') ?>',
+            url: id
+                ? '<?= base_url('egresos/actualizar') ?>'
+                : '<?= base_url('egresos/guardar') ?>',
             type: 'POST',
             data: $(this).serialize(),
             dataType: 'json',
@@ -203,7 +220,7 @@ $(document).ready(function () {
 
                 const mensaje = response && response.message
                     ? response.message
-                    : (esExitoso ? 'Egreso registrado correctamente' : 'No se pudo guardar el egreso');
+                    : (id ? 'Egreso actualizado correctamente' : 'Egreso registrado correctamente');
 
                 if (esExitoso) {
                     modalEgreso.hide();
@@ -211,7 +228,7 @@ $(document).ready(function () {
 
                     Swal.fire({
                         icon: 'success',
-                        title: 'Registro guardado',
+                        title: id ? 'Egreso actualizado' : 'Egreso registrado',
                         text: mensaje,
                         timer: 2000,
                         showConfirmButton: false
@@ -239,12 +256,119 @@ $(document).ready(function () {
             },
             complete: function () {
                 btnGuardar.prop('disabled', false)
-                          .html('<i class="fas fa-save"></i> Guardar');
+                          .html(id ? '<i class="fas fa-save"></i> Actualizar' : '<i class="fas fa-save"></i> Guardar');
             }
         });
     });
 
-    // ── Limpiar al cerrar modal ────────────────────────────────────────────────
+    $(document).on('click', '.btnEditar', function () {
+        const id = $(this).data('id');
+
+        $.ajax({
+            url: '<?= base_url('egresos/obtener') ?>',
+            type: 'POST',
+            data: { id_egreso: id },
+            dataType: 'json',
+            success: function (response) {
+                const esExitoso = response && (
+                    response.status === 'success' ||
+                    response.status === true ||
+                    response.success === true ||
+                    response.ok === true
+                );
+
+                if (!esExitoso) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: response.message || 'No se pudo obtener el egreso'
+                    });
+                    return;
+                }
+
+                const egreso = response.data.egreso;
+
+                $('#id_egreso').val(egreso.id_egreso);
+                $('#compra_mercaderia').val(egreso.compra_mercaderia);
+                $('#flete').val(egreso.flete);
+                $('#descripcion').val(egreso.descripcion);
+
+                $('#modalEgresoTitulo').html('<i class="fas fa-edit"></i> Editar Egreso');
+                $('#btnGuardar').html('<i class="fas fa-save"></i> Actualizar');
+
+                modalEgreso.show();
+            },
+            error: function () {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'No se pudo cargar el egreso'
+                });
+            }
+        });
+    });
+
+    $(document).on('click', '.btnEliminar', function () {
+        const id = $(this).data('id');
+
+        Swal.fire({
+            title: '¿Eliminar egreso?',
+            text: 'Esta acción no se puede deshacer.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '<?= base_url('egresos/eliminar') ?>',
+                    type: 'POST',
+                    data: { id_egreso: id },
+                    dataType: 'json',
+                    success: function (response) {
+                        const esExitoso = response && (
+                            response.status === 'success' ||
+                            response.status === true ||
+                            response.success === true ||
+                            response.ok === true
+                        );
+
+                        if (esExitoso) {
+                            tabla.ajax.reload(null, false);
+
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Egreso eliminado',
+                                text: response.message || 'Egreso eliminado correctamente',
+                                timer: 2000,
+                                showConfirmButton: false
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'No se pudo eliminar',
+                                text: response.message || 'Error al eliminar el egreso'
+                            });
+                        }
+                    },
+                    error: function (xhr) {
+                        let mensaje = 'Error al eliminar el egreso';
+
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            mensaje = xhr.responseJSON.message;
+                        }
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error de solicitud',
+                            text: mensaje
+                        });
+                    }
+                });
+            }
+        });
+    });
+
     $('#modalEgreso').on('hidden.bs.modal', function () {
         limpiarFormulario();
     });
@@ -252,6 +376,9 @@ $(document).ready(function () {
 
 function limpiarFormulario() {
     $('#formEgreso')[0].reset();
+    $('#id_egreso').val('');
+    $('#modalEgresoTitulo').html('<i class="fas fa-plus"></i> Nuevo Egreso');
+    $('#btnGuardar').html('<i class="fas fa-save"></i> Guardar');
 }
 </script>
 <?= $this->endSection() ?>
