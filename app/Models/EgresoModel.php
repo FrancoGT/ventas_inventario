@@ -1,116 +1,169 @@
 <?php
 
-namespace App\Models;
+namespace App\Controllers;
 
-use CodeIgniter\Model;
+use App\Models\EgresoModel;
 
-class EgresoModel extends Model
+class EgresoController extends BaseController
 {
-    protected $table            = 'tbl_egreso';
-    protected $primaryKey       = 'id_egreso';
+    protected EgresoModel $egresoModel;
 
-    protected $allowedFields    = [
-        'fecha',
-        'compra_mercaderia',
-        'flete',
-        'descripcion',
-        'status',
-    ];
-
-    protected $returnType       = 'object';
-    protected $useTimestamps    = false;
-
-    // ----------------------------------------------------------------
-    //  LISTADOS
-    // ----------------------------------------------------------------
-
-    /**
-     * Listado para DataTables.
-     */
-    public function getParaDatatables(): array
+    public function __construct()
     {
-        return $this->select('id_egreso, fecha, compra_mercaderia, flete, descripcion')
-                    ->orderBy('id_egreso', 'DESC')
-                    ->findAll();
+        $this->egresoModel = new EgresoModel();
     }
 
-    // ----------------------------------------------------------------
-    //  GUARDAR
-    // ----------------------------------------------------------------
-
-    /**
-     * Registra un nuevo egreso con la fecha actual.
-     */
-    public function guardar(array $postData): int
+    public function index()
     {
-        $this->insert([
-            'fecha'             => $this->fechaActual(),
-            'compra_mercaderia' => $postData['compra_mercaderia'],
-            'flete'             => $postData['flete'],
-            'descripcion'       => $postData['descripcion'],
-            'status'            => 1,
+        $data = [
+            'titulo'   => 'Egresos',
+            'userData' => $this->userData,
+        ];
+
+        return view('egresos/index', $data);
+    }
+
+    public function listar()
+    {
+        if (!$this->request->isAJAX()) {
+            return $this->jsonError('Acceso no permitido', 403);
+        }
+
+        $egresos = $this->egresoModel->getParaDatatables();
+        $data    = [];
+
+        foreach ($egresos as $egreso) {
+            $data[] = [
+                'id_egreso'         => $egreso->id_egreso,
+                'fecha'             => $egreso->fecha,
+                'compra_mercaderia' => number_format((float) $egreso->compra_mercaderia, 2, '.', ''),
+                'flete'             => number_format((float) $egreso->flete, 2, '.', ''),
+                'descripcion'       => esc($egreso->descripcion),
+            ];
+        }
+
+        return $this->response->setJSON([
+            'data'            => $data,
+            'recordsTotal'    => $this->egresoModel->contarActivos(),
+            'recordsFiltered' => count($data),
+        ]);
+    }
+
+    public function guardar()
+    {
+        if (!$this->request->isAJAX()) {
+            return $this->jsonError('Acceso no permitido', 403);
+        }
+
+        $rules = [
+            'compra_mercaderia' => 'required|numeric|greater_than_equal_to[0]',
+            'flete'             => 'required|numeric|greater_than_equal_to[0]',
+            'descripcion'       => 'permit_empty|max_length[500]',
+        ];
+
+        if (!$this->validate($rules)) {
+            return $this->jsonError(implode(', ', $this->validator->getErrors()));
+        }
+
+        $id = $this->egresoModel->guardar([
+            'compra_mercaderia' => $this->request->getPost('compra_mercaderia'),
+            'flete'             => $this->request->getPost('flete'),
+            'descripcion'       => $this->request->getPost('descripcion') ?? '',
         ]);
 
-        return (int) $this->getInsertID();
+        return $this->jsonSuccess('Egreso registrado correctamente.', [
+            'id' => $id,
+        ]);
     }
 
-    // ----------------------------------------------------------------
-    //  REPORTES
-    // ----------------------------------------------------------------
-
-    /**
-     * Egresos de una fecha específica.
-     */
-    public function reportePorFecha(string $fecha): array
+    public function obtener()
     {
-        return $this->where('fecha', $fecha)->findAll();
+        if (!$this->request->isAJAX()) {
+            return $this->jsonError('Acceso no permitido', 403);
+        }
+
+        $id = (int) $this->request->getPost('id_egreso');
+
+        if ($id <= 0) {
+            return $this->jsonError('ID no válido');
+        }
+
+        $egreso = $this->egresoModel->obtenerPorId($id);
+
+        if (!$egreso) {
+            return $this->jsonError('Egreso no encontrado');
+        }
+
+        return $this->jsonSuccess('Egreso encontrado.', [
+            'egreso' => $egreso,
+        ]);
     }
 
-    /**
-     * Total de compra_mercaderia en una fecha (usando SQL).
-     */
-    public function totalEgresosPorFecha(string $fecha): float
+    public function actualizar()
     {
-        $result = $this->selectSum('compra_mercaderia', 'total')
-                       ->where('fecha', $fecha)
-                       ->first();
+        if (!$this->request->isAJAX()) {
+            return $this->jsonError('Acceso no permitido', 403);
+        }
 
-        return (float) ($result->total ?? 0);
+        $id = (int) $this->request->getPost('id_egreso');
+
+        if ($id <= 0) {
+            return $this->jsonError('ID no válido');
+        }
+
+        $egreso = $this->egresoModel->obtenerPorId($id);
+
+        if (!$egreso) {
+            return $this->jsonError('Egreso no encontrado');
+        }
+
+        $rules = [
+            'compra_mercaderia' => 'required|numeric|greater_than_equal_to[0]',
+            'flete'             => 'required|numeric|greater_than_equal_to[0]',
+            'descripcion'       => 'permit_empty|max_length[500]',
+        ];
+
+        if (!$this->validate($rules)) {
+            return $this->jsonError(implode(', ', $this->validator->getErrors()));
+        }
+
+        $actualizado = $this->egresoModel->actualizarEgreso($id, [
+            'compra_mercaderia' => $this->request->getPost('compra_mercaderia'),
+            'flete'             => $this->request->getPost('flete'),
+            'descripcion'       => $this->request->getPost('descripcion') ?? '',
+        ]);
+
+        if (!$actualizado) {
+            return $this->jsonError('No se pudo actualizar el egreso.');
+        }
+
+        return $this->jsonSuccess('Egreso actualizado correctamente.');
     }
 
-    /**
-     * Egresos entre dos fechas.
-     */
-    public function reporteEntreFechas(string $fechaInicio, string $fechaFin): array
+    public function eliminar()
     {
-        return $this->where('fecha >=', $fechaInicio)
-                    ->where('fecha <=', $fechaFin)
-                    ->findAll();
-    }
+        if (!$this->request->isAJAX()) {
+            return $this->jsonError('Acceso no permitido', 403);
+        }
 
-    /**
-     * Total de compra_mercaderia entre dos fechas (usando SQL).
-     */
-    public function totalEgresosEntreFechas(string $fechaInicio, string $fechaFin): float
-    {
-        $result = $this->selectSum('compra_mercaderia', 'total')
-                       ->where('fecha >=', $fechaInicio)
-                       ->where('fecha <=', $fechaFin)
-                       ->first();
+        $id = (int) $this->request->getPost('id_egreso');
 
-        return (float) ($result->total ?? 0);
-    }
+        if ($id <= 0) {
+            return $this->jsonError('ID no válido');
+        }
 
-    // ----------------------------------------------------------------
-    //  UTILIDADES
-    // ----------------------------------------------------------------
+        $egreso = $this->egresoModel->obtenerPorId($id);
 
-    /**
-     * Fecha actual en zona horaria de Lima.
-     */
-    public function fechaActual(): string
-    {
-        $date = new \DateTime('now', new \DateTimeZone('America/Lima'));
-        return $date->format('Y-m-d');
+        if (!$egreso) {
+            return $this->jsonError('Egreso no encontrado');
+        }
+
+        $eliminado = $this->egresoModel->eliminarEgreso($id);
+
+        if (!$eliminado) {
+            return $this->jsonError('No se pudo eliminar el egreso.');
+        }
+
+        return $this->jsonSuccess('Egreso eliminado correctamente.');
     }
 }
