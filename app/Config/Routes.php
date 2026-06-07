@@ -75,9 +75,5 @@ $routes->group('', ['filter' => 'auth'], static function ($routes) {
     // -----------------------------------------------------------------
     //  PERFIL DE USUARIO
     // -----------------------------------------------------------------
-    $routes->group('perfil', static function ($routes) {
-        $routes->get('/', 'UsuarioController::perfil');
-        $routes->post('datos', 'UsuarioController::datos');        // ✅ GET → POST (si usa isAJAX)
-        $routes->post('actualizar', 'UsuarioController::actualizar');   // AJAX
-    });
+    $routes->get('perfil', 'PerfilController::index');
 });
