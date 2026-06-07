@@ -156,10 +156,10 @@ $(document).ready(function () {
                 orderable: false,
                 render: function (data, type, row) {
                     return `
-                        <button class="btn btn-warning btn-sm btnEditar" data-id="${row.id_egreso}">
+                        <button type="button" class="btn btn-warning btn-sm btnEditar" title="Editar">
                             <i class="fas fa-edit"></i>
                         </button>
-                        <button class="btn btn-danger btn-sm btnEliminar" data-id="${row.id_egreso}">
+                        <button type="button" class="btn btn-danger btn-sm btnEliminar" data-id="${row.id_egreso}" title="Eliminar">
                             <i class="fas fa-trash"></i>
                         </button>
                     `;
@@ -246,6 +246,9 @@ $(document).ready(function () {
 
                 if (xhr.responseJSON && xhr.responseJSON.message) {
                     mensaje = xhr.responseJSON.message;
+                } else if (xhr.responseText) {
+                    mensaje = 'Error del servidor. Revisa el log de CodeIgniter.';
+                    console.error(xhr.responseText);
                 }
 
                 Swal.fire({
@@ -262,50 +265,26 @@ $(document).ready(function () {
     });
 
     $(document).on('click', '.btnEditar', function () {
-        const id = $(this).data('id');
+        const fila = tabla.row($(this).closest('tr')).data();
 
-        $.ajax({
-            url: '<?= base_url('egresos/obtener') ?>',
-            type: 'POST',
-            data: { id_egreso: id },
-            dataType: 'json',
-            success: function (response) {
-                const esExitoso = response && (
-                    response.status === 'success' ||
-                    response.status === true ||
-                    response.success === true ||
-                    response.ok === true
-                );
+        if (!fila) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'No se pudo obtener la fila seleccionada'
+            });
+            return;
+        }
 
-                if (!esExitoso) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: response.message || 'No se pudo obtener el egreso'
-                    });
-                    return;
-                }
+        $('#id_egreso').val(fila.id_egreso);
+        $('#compra_mercaderia').val(parseFloat(fila.compra_mercaderia || 0).toFixed(2));
+        $('#flete').val(parseFloat(fila.flete || 0).toFixed(2));
+        $('#descripcion').val(fila.descripcion || '');
 
-                const egreso = response.data.egreso;
+        $('#modalEgresoTitulo').html('<i class="fas fa-edit"></i> Editar Egreso');
+        $('#btnGuardar').html('<i class="fas fa-save"></i> Actualizar');
 
-                $('#id_egreso').val(egreso.id_egreso);
-                $('#compra_mercaderia').val(egreso.compra_mercaderia);
-                $('#flete').val(egreso.flete);
-                $('#descripcion').val(egreso.descripcion);
-
-                $('#modalEgresoTitulo').html('<i class="fas fa-edit"></i> Editar Egreso');
-                $('#btnGuardar').html('<i class="fas fa-save"></i> Actualizar');
-
-                modalEgreso.show();
-            },
-            error: function () {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'No se pudo cargar el egreso'
-                });
-            }
-        });
+        modalEgreso.show();
     });
 
     $(document).on('click', '.btnEliminar', function () {
@@ -319,53 +298,58 @@ $(document).ready(function () {
             confirmButtonText: 'Sí, eliminar',
             cancelButtonText: 'Cancelar'
         }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: '<?= base_url('egresos/eliminar') ?>',
-                    type: 'POST',
-                    data: { id_egreso: id },
-                    dataType: 'json',
-                    success: function (response) {
-                        const esExitoso = response && (
-                            response.status === 'success' ||
-                            response.status === true ||
-                            response.success === true ||
-                            response.ok === true
-                        );
+            if (!result.isConfirmed) {
+                return;
+            }
 
-                        if (esExitoso) {
-                            tabla.ajax.reload(null, false);
+            $.ajax({
+                url: '<?= base_url('egresos/eliminar') ?>',
+                type: 'POST',
+                data: { id_egreso: id },
+                dataType: 'json',
+                success: function (response) {
+                    const esExitoso = response && (
+                        response.status === 'success' ||
+                        response.status === true ||
+                        response.success === true ||
+                        response.ok === true
+                    );
 
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Egreso eliminado',
-                                text: response.message || 'Egreso eliminado correctamente',
-                                timer: 2000,
-                                showConfirmButton: false
-                            });
-                        } else {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'No se pudo eliminar',
-                                text: response.message || 'Error al eliminar el egreso'
-                            });
-                        }
-                    },
-                    error: function (xhr) {
-                        let mensaje = 'Error al eliminar el egreso';
-
-                        if (xhr.responseJSON && xhr.responseJSON.message) {
-                            mensaje = xhr.responseJSON.message;
-                        }
+                    if (esExitoso) {
+                        tabla.ajax.reload(null, false);
 
                         Swal.fire({
+                            icon: 'success',
+                            title: 'Egreso eliminado',
+                            text: response.message || 'Egreso eliminado correctamente',
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                    } else {
+                        Swal.fire({
                             icon: 'error',
-                            title: 'Error de solicitud',
-                            text: mensaje
+                            title: 'No se pudo eliminar',
+                            text: response.message || 'Error al eliminar el egreso'
                         });
                     }
-                });
-            }
+                },
+                error: function (xhr) {
+                    let mensaje = 'Error al eliminar el egreso';
+
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        mensaje = xhr.responseJSON.message;
+                    } else if (xhr.responseText) {
+                        mensaje = 'Error del servidor. Revisa el log de CodeIgniter.';
+                        console.error(xhr.responseText);
+                    }
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error de solicitud',
+                        text: mensaje
+                    });
+                }
+            });
         });
     });
 
