@@ -36,7 +36,7 @@ class EgresoController extends BaseController
                 'flete'             => number_format((float) $egreso->flete, 2),
                 'descripcion'       => esc($egreso->descripcion),
                 'acciones'          =>
-                    '<button class="btn btn-sm btn-warning btn-editar" data-id="' . $egreso->id_egreso . '">
+                    '<button class="btn btn-sm btn-editar" data-id="' . $egreso->id_egreso . '">
                         <i class="fas fa-edit"></i>
                     </button> ' .
                     '<button class="btn btn-sm btn-danger btn-eliminar" data-id="' . $egreso->id_egreso . '">

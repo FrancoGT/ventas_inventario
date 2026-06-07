@@ -33,7 +33,7 @@ class ProductoController extends BaseController
                 'nombre'        => esc($producto->nombre),
                 'precio'        => number_format($producto->precio, 2),
                 'acciones'      => 
-                    '<button class="btn btn-sm btn-warning btn-editar" data-id="' . $producto->id_producto . '">
+                    '<button class="btn btn-sm btn-editar" data-id="' . $producto->id_producto . '">
                         <i class="fas fa-edit"></i>
                     </button> ' .
                     '<button class="btn btn-sm btn-danger btn-eliminar" data-id="' . $producto->id_producto . '">
