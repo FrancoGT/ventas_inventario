@@ -71,7 +71,7 @@ class VentaController extends BaseController
                 'prendas'  => $prendas,
                 'total'    => VentaModel::formatoNumerico($total),
                 'acciones' => '
-                    <button class="btn btn-sm btn-info btn-detalle" 
+                    <button class="btn btn-sm btn-info text-white btn-detalle" 
                             data-id="' . $venta->id_venta . '">
                         <i class="fas fa-eye"></i> Ver
                     </button>',
