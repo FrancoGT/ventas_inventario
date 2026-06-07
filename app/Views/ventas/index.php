@@ -422,7 +422,7 @@ $(document).ready(function() {
         columns: [
             { data: 'id_venta' },
             { data: 'fecha' },
-            { data: 'cantidad', className: 'text-center' },
+            { data: 'prendas', className: 'text-center' },
             { 
                 data: 'total',
                 className: 'text-end',
