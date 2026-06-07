@@ -50,10 +50,14 @@ $routes->group('', ['filter' => 'auth'], static function ($routes) {
     // -----------------------------------------------------------------
     //  EGRESOS
     // -----------------------------------------------------------------
+    // -----------------------------------------------------------------
     $routes->group('egresos', static function ($routes) {
         $routes->get('/', 'EgresoController::index');
-        $routes->post('listar', 'EgresoController::listar');       // ✅ GET → POST (consistencia)
-        $routes->post('guardar', 'EgresoController::guardar');     // AJAX
+        $routes->post('listar', 'EgresoController::listar');
+        $routes->post('guardar', 'EgresoController::guardar');
+        $routes->post('editar/(:num)', 'EgresoController::editar/$1');
+        $routes->post('actualizar', 'EgresoController::actualizar');
+        $routes->post('eliminar', 'EgresoController::eliminar');
     });
 
     // -----------------------------------------------------------------
