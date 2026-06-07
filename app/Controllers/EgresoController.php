@@ -2,20 +2,15 @@
 
 namespace App\Controllers;
 
-use App\Models\EgresoModel;
-
 class EgresoController extends BaseController
 {
-    protected EgresoModel $egresoModel;
+    protected $egresoModel;
 
     public function __construct()
     {
-        $this->egresoModel = new EgresoModel();
+        $this->egresoModel = model('EgresoModel');
     }
 
-    /**
-     * Vista principal de egresos.
-     */
     public function index()
     {
         $data = [
@@ -26,9 +21,6 @@ class EgresoController extends BaseController
         return view('egresos/index', $data);
     }
 
-    /**
-     * AJAX: Listar egresos.
-     */
     public function listar()
     {
         if (!$this->request->isAJAX()) {
@@ -36,52 +28,46 @@ class EgresoController extends BaseController
         }
 
         $egresos = $this->egresoModel->getParaDatatables();
-        $data    = [];
+        $data = [];
 
         foreach ($egresos as $egreso) {
             $data[] = [
-                'id_egreso'        => $egreso->id_egreso,
-                'fecha'            => $egreso->fecha,
-                'compra_mercaderia' => number_format($egreso->compra_mercaderia, 2),
-                'flete'            => number_format($egreso->flete, 2),
-                'descripcion'      => esc($egreso->descripcion),
+                'id_egreso'         => $egreso->id_egreso,
+                'fecha'             => $egreso->fecha,
+                'compra_mercaderia' => number_format((float) $egreso->compra_mercaderia, 2, '.', ''),
+                'flete'             => number_format((float) $egreso->flete, 2, '.', ''),
+                'descripcion'       => esc($egreso->descripcion),
             ];
         }
 
         return $this->response->setJSON([
             'data'            => $data,
-            'recordsTotal'    => $this->egresoModel->countAllResults(false),
+            'recordsTotal'    => count($data),
             'recordsFiltered' => count($data),
         ]);
     }
 
-    /**
-     * AJAX: Guardar egreso.
-     */
     public function guardar()
     {
         if (!$this->request->isAJAX()) {
             return $this->jsonError('Acceso no permitido', 403);
         }
 
-        $rules = [
-            'compra_mercaderia' => 'required|numeric|greater_than_equal_to[0]',
-            'flete'             => 'required|numeric|greater_than_equal_to[0]',
-            'descripcion'       => 'permit_empty|max_length[500]',
-        ];
-
-        if (!$this->validate($rules)) {
+        if (!$this->validarEgreso()) {
             return $this->jsonError(implode(', ', $this->validator->getErrors()));
         }
 
         $id = $this->egresoModel->guardar([
             'compra_mercaderia' => $this->request->getPost('compra_mercaderia'),
             'flete'             => $this->request->getPost('flete'),
-            'descripcion'       => $this->request->getPost('descripcion'),
+            'descripcion'       => $this->request->getPost('descripcion') ?? '',
         ]);
 
-        return $this->jsonSuccess('Egreso registrado correctamente.', ['id' => $id]);
+        return $this->jsonSuccess('Egreso registrado correctamente.', [
+            'id' => $id,
+        ]);
     }
+
     public function obtener()
     {
         if (!$this->request->isAJAX()) {
@@ -94,14 +80,16 @@ class EgresoController extends BaseController
             return $this->jsonError('ID no válido');
         }
 
-        $egreso = $this->egresoModel->obtenerPorId($id);
+        $egreso = $this->egresoModel->where('id_egreso', $id)
+                                    ->where('status', 1)
+                                    ->first();
 
         if (!$egreso) {
             return $this->jsonError('Egreso no encontrado');
         }
 
         return $this->jsonSuccess('Egreso encontrado.', [
-            'egreso' => $egreso
+            'egreso' => $egreso,
         ]);
     }
 
@@ -117,27 +105,27 @@ class EgresoController extends BaseController
             return $this->jsonError('ID no válido');
         }
 
-        $egreso = $this->egresoModel->obtenerPorId($id);
+        $egreso = $this->egresoModel->where('id_egreso', $id)
+                                    ->where('status', 1)
+                                    ->first();
 
         if (!$egreso) {
             return $this->jsonError('Egreso no encontrado');
         }
 
-        $rules = [
-            'compra_mercaderia' => 'required|numeric|greater_than_equal_to[0]',
-            'flete'             => 'required|numeric|greater_than_equal_to[0]',
-            'descripcion'       => 'permit_empty|max_length[500]',
-        ];
-
-        if (!$this->validate($rules)) {
+        if (!$this->validarEgreso()) {
             return $this->jsonError(implode(', ', $this->validator->getErrors()));
         }
 
-        $this->egresoModel->actualizarEgreso($id, [
+        $actualizado = $this->egresoModel->update($id, [
             'compra_mercaderia' => $this->request->getPost('compra_mercaderia'),
             'flete'             => $this->request->getPost('flete'),
-            'descripcion'       => $this->request->getPost('descripcion'),
+            'descripcion'       => $this->request->getPost('descripcion') ?? '',
         ]);
+
+        if (!$actualizado) {
+            return $this->jsonError('No se pudo actualizar el egreso.');
+        }
 
         return $this->jsonSuccess('Egreso actualizado correctamente.');
     }
@@ -154,14 +142,31 @@ class EgresoController extends BaseController
             return $this->jsonError('ID no válido');
         }
 
-        $egreso = $this->egresoModel->obtenerPorId($id);
+        $egreso = $this->egresoModel->where('id_egreso', $id)
+                                    ->where('status', 1)
+                                    ->first();
 
         if (!$egreso) {
             return $this->jsonError('Egreso no encontrado');
         }
 
-        $this->egresoModel->eliminarEgreso($id);
+        $eliminado = $this->egresoModel->update($id, [
+            'status' => 0,
+        ]);
+
+        if (!$eliminado) {
+            return $this->jsonError('No se pudo eliminar el egreso.');
+        }
 
         return $this->jsonSuccess('Egreso eliminado correctamente.');
+    }
+
+    private function validarEgreso(): bool
+    {
+        return $this->validate([
+            'compra_mercaderia' => 'required|numeric|greater_than_equal_to[0]',
+            'flete'             => 'required|numeric|greater_than_equal_to[0]',
+            'descripcion'       => 'permit_empty|max_length[500]',
+        ]);
     }
 }
