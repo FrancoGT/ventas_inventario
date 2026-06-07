@@ -86,7 +86,7 @@
                             <tfoot>
                                 <tr class="table-warning fw-bold">
                                     <td colspan="2" class="text-end">TOTALES:</td>
-                                    <td id="totalPrendas" class="text-center">0</td>
+                                    <td id="totalCantidad" class="text-center">0</td>
                                     <td id="totalCostoVenta" class="text-end">0.00</td>
                                     <td id="totalDelivery" class="text-end">0.00</td>
                                     <td id="totalGeneral" class="text-end fs-5 text-success">S/ 0.00</td>
@@ -422,7 +422,7 @@ $(document).ready(function() {
         columns: [
             { data: 'id_venta' },
             { data: 'fecha' },
-            { data: 'prendas', className: 'text-center' },
+            { data: 'cantidad', className: 'text-center' },
             { 
                 data: 'total',
                 className: 'text-end',
@@ -918,18 +918,18 @@ function recalcularTodo() {
 }
 
 function recalcularTotales() {
-    let totalPrendas = 0, totalCV = 0, totalDel = 0, totalGen = 0;
+    let totalCantidad = 0, totalCV = 0, totalDel = 0, totalGen = 0;
     $('#tbodyDetalle tr').each(function() {
         const cant = parseInt($(this).find('.input-cantidad').val()) || 0;
         const cv   = parseFloat($(this).find('.input-costo-venta').val()) || 0;
         const cd   = parseFloat($(this).find('.input-costo-delivery').val()) || 0;
         const sub  = parseFloat($(this).find('.subtotal-linea').text()) || 0;
-        totalPrendas += cant;
-        totalCV      += (cv * cant);
-        totalDel     += cd;
-        totalGen     += sub;
+        totalCantidad += cant;
+        totalCV       += (cv * cant);
+        totalDel      += cd;
+        totalGen      += sub;
     });
-    $('#totalPrendas').text(totalPrendas);
+    $('#totalCantidad').text(totalCantidad);
     $('#totalCostoVenta').text(totalCV.toFixed(2));
     $('#totalDelivery').text(totalDel.toFixed(2));
     $('#totalGeneral').text('S/ ' + totalGen.toFixed(2));
