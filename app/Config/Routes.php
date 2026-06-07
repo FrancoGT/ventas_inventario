@@ -65,8 +65,11 @@ $routes->group('', ['filter' => 'auth'], static function ($routes) {
     // -----------------------------------------------------------------
     $routes->group('reportes', static function ($routes) {
         $routes->get('/', 'ReporteController::index');
-        $routes->post('por-fecha', 'ReporteController::porFecha');       // AJAX
-        $routes->post('entre-fechas', 'ReporteController::entreFechas'); // AJAX
+        $routes->get('hoy', 'ReporteController::hoy');
+        $routes->get('porFecha', 'ReporteController::porFecha');
+        $routes->get('porRango', 'ReporteController::porRango');
+        $routes->get('semanaActual', 'ReporteController::semanaActual');
+        $routes->get('mesActual', 'ReporteController::mesActual');
     });
 
     // -----------------------------------------------------------------
