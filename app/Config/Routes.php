@@ -76,4 +76,14 @@ $routes->group('', ['filter' => 'auth'], static function ($routes) {
     //  PERFIL DE USUARIO
     // -----------------------------------------------------------------
     $routes->get('perfil', 'PerfilController::index');
+
+
+    $routes->get('debug-db', function () {
+    return json_encode([
+        'host' => env('database.default.hostname'),
+        'db'   => env('database.default.database'),
+        'user' => env('database.default.username'),
+        'port' => env('database.default.port'),
+    ]);
+});
 });
