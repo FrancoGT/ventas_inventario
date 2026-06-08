@@ -14,43 +14,39 @@ $routes->get('/login', 'AuthController::index');
 $routes->post('/login/authenticate', 'AuthController::authenticate');
 $routes->get('/logout', 'AuthController::logout');
 
+// DEBUG TEMPORAL - PÚBLICO
+$routes->get('debug-db', function () {
+    return service('response')->setJSON([
+        'host' => env('database.default.hostname'),
+        'db'   => env('database.default.database'),
+        'user' => env('database.default.username'),
+        'port' => env('database.default.port'),
+    ]);
+});
+
 // =====================================================================
 //  RUTAS PROTEGIDAS (requieren autenticación)
 // =====================================================================
 $routes->group('', ['filter' => 'auth'], static function ($routes) {
 
-    // -----------------------------------------------------------------
-    //  DASHBOARD
-    // -----------------------------------------------------------------
     $routes->get('/dashboard', 'DashboardController::index');
 
-    // -----------------------------------------------------------------
-    //  PRODUCTOS
-    // -----------------------------------------------------------------
     $routes->group('productos', static function ($routes) {
         $routes->get('/', 'ProductoController::index');
-        $routes->post('listar', 'ProductoController::listar');           // AJAX DataTables
-        $routes->post('guardar', 'ProductoController::guardar');         // AJAX
-        $routes->post('editar/(:num)', 'ProductoController::editar/$1'); // AJAX
-        $routes->post('actualizar', 'ProductoController::actualizar');   // AJAX
-        $routes->post('eliminar', 'ProductoController::eliminar');       // AJAX
+        $routes->post('listar', 'ProductoController::listar');
+        $routes->post('guardar', 'ProductoController::guardar');
+        $routes->post('editar/(:num)', 'ProductoController::editar/$1');
+        $routes->post('actualizar', 'ProductoController::actualizar');
+        $routes->post('eliminar', 'ProductoController::eliminar');
     });
 
-    // -----------------------------------------------------------------
-    //  VENTAS
-    // -----------------------------------------------------------------
     $routes->group('ventas', static function ($routes) {
-        $routes->get('/', 'VentaController::index');               // Vista principal
-        $routes->post('listar', 'VentaController::listar');        // ✅ GET → POST (DataTables envía POST)
-        $routes->post('guardar', 'VentaController::guardar');      // AJAX guardar venta
-        $routes->post('detalle/(:num)', 'VentaController::detalle/$1'); // ✅ GET → POST (AJAX envía POST)
-        // $routes->get('nueva', 'VentaController::nueva');        // ✘ ELIMINADA (se usa modal)
+        $routes->get('/', 'VentaController::index');
+        $routes->post('listar', 'VentaController::listar');
+        $routes->post('guardar', 'VentaController::guardar');
+        $routes->post('detalle/(:num)', 'VentaController::detalle/$1');
     });
 
-    // -----------------------------------------------------------------
-    //  EGRESOS
-    // -----------------------------------------------------------------
-    // -----------------------------------------------------------------
     $routes->group('egresos', static function ($routes) {
         $routes->get('/', 'EgresoController::index');
         $routes->post('listar', 'EgresoController::listar');
@@ -60,9 +56,6 @@ $routes->group('', ['filter' => 'auth'], static function ($routes) {
         $routes->post('eliminar', 'EgresoController::eliminar');
     });
 
-    // -----------------------------------------------------------------
-    //  REPORTES
-    // -----------------------------------------------------------------
     $routes->group('reportes', static function ($routes) {
         $routes->get('/', 'ReporteController::index');
         $routes->get('hoy', 'ReporteController::hoy');
@@ -72,18 +65,5 @@ $routes->group('', ['filter' => 'auth'], static function ($routes) {
         $routes->get('mesActual', 'ReporteController::mesActual');
     });
 
-    // -----------------------------------------------------------------
-    //  PERFIL DE USUARIO
-    // -----------------------------------------------------------------
     $routes->get('perfil', 'PerfilController::index');
-
-
-    $routes->get('debug-db', function () {
-    return json_encode([
-        'host' => env('database.default.hostname'),
-        'db'   => env('database.default.database'),
-        'user' => env('database.default.username'),
-        'port' => env('database.default.port'),
-    ]);
-});
 });
