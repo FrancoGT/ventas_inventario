@@ -17,10 +17,10 @@ $routes->get('/logout', 'AuthController::logout');
 // DEBUG TEMPORAL - PÚBLICO
 $routes->get('debug-db', function () {
     return service('response')->setJSON([
-        'host' => env('database.default.hostname'),
-        'db'   => env('database.default.database'),
-        'user' => env('database.default.username'),
-        'port' => env('database.default.port'),
+        'DB_HOST' => getenv('DB_HOST'),
+        'DB_NAME' => getenv('DB_NAME'),
+        'DB_USER' => getenv('DB_USER'),
+        'DB_PORT' => getenv('DB_PORT'),
     ]);
 });
 
