@@ -1,68 +1,118 @@
-# CodeIgniter 4 Application Starter
+# Sistema de Ventas con Flujo de Caja en Codeigniter 4
 
-## What is CodeIgniter?
+# 🛒 Base de Datos — Sistema de Ventas
 
-CodeIgniter is a PHP full-stack web framework that is light, fast, flexible and secure.
-More information can be found at the [official site](https://codeigniter.com).
+Script SQL listo para usar con **CodeIgniter 4**. Contiene la estructura completa de tablas y datos de ejemplo para arrancar el proyecto sin configuración adicional.
 
-This repository holds a composer-installable app starter.
-It has been built from the
-[development repository](https://github.com/codeigniter4/CodeIgniter4).
+---
 
-More information about the plans for version 4 can be found in [CodeIgniter 4](https://forum.codeigniter.com/forumdisplay.php?fid=28) on the forums.
+## 📋 Requisitos
 
-You can read the [user guide](https://codeigniter.com/user_guide/)
-corresponding to the latest version of the framework.
+- MySQL 5.7 o superior
+- PHP 7.4+ con CodeIgniter 4
+- HeidiSQL, phpMyAdmin, o cualquier cliente MySQL
 
-## Installation & updates
+---
 
-`composer create-project codeigniter4/appstarter` then `composer update` whenever
-there is a new release of the framework.
+## 🗄️ Tablas incluidas
 
-When updating, check the release notes to see if there are any changes you might need to apply
-to your `app` folder. The affected files can be copied or merged from
-`vendor/codeigniter4/framework/app`.
+| Tabla | Descripción |
+|---|---|
+| `tbl_users` | Usuarios del sistema (admin, vendedores) |
+| `tbl_producto` | Catálogo de productos con código de barras |
+| `tbl_egreso` | Registro de compras y gastos |
+| `tbl_venta` | Cabecera de cada venta realizada |
+| `tbl_detalle_venta` | Líneas de detalle por venta (productos, cantidades, costos) |
 
-## Setup
+---
 
-Copy `env` to `.env` and tailor for your app, specifically the baseURL
-and any database settings.
+## 🚀 Instalación
 
-## Important Change with index.php
+### 1. Importar la base de datos
 
-`index.php` is no longer in the root of the project! It has been moved inside the *public* folder,
-for better security and separation of components.
+Ejecuta el script en tu cliente MySQL favorito, o desde la terminal:
 
-This means that you should configure your web server to "point" to your project's *public* folder, and
-not to the project root. A better practice would be to configure a virtual host to point there. A poor practice would be to point your web server to the project root and expect to enter *public/...*, as the rest of your logic and the
-framework are exposed.
+```bash
+mysql -u root -p < ventas.sql
+```
 
-**Please** read the user guide for a better explanation of how CI4 works!
+Esto creará automáticamente la base de datos `ventas` con todas las tablas y datos de ejemplo.
 
-## Repository Management
+### 2. Configurar CodeIgniter 4
 
-We use GitHub issues, in our main repository, to track **BUGS** and to track approved **DEVELOPMENT** work packages.
-We use our [forum](http://forum.codeigniter.com) to provide SUPPORT and to discuss
-FEATURE REQUESTS.
+Abre el archivo `.env` en la raíz de tu proyecto CI4 y ajusta las credenciales:
 
-This repository is a "distribution" one, built by our release preparation script.
-Problems with it can be raised on our forum, or as issues in the main repository.
+```env
+database.default.hostname = 127.0.0.1
+database.default.database = ventas
+database.default.username = root
+database.default.password = tu_contraseña
+database.default.DBDriver = MySQLi
+database.default.port     = 3306
+```
 
-## Server Requirements
+> 💡 Si no tienes el archivo `.env`, copia `env` → `.env` y descomenta las líneas de base de datos.
 
-PHP version 8.1 or higher is required, with the following extensions installed:
+### 3. Verificar la conexión
 
-- [intl](http://php.net/manual/en/intl.requirements.php)
-- [mbstring](http://php.net/manual/en/mbstring.installation.php)
+Desde el navegador abre tu proyecto CI4. Si la página carga sin errores de base de datos, ¡estás listo! 🎉
 
-> [!WARNING]
-> - The end of life date for PHP 7.4 was November 28, 2022.
-> - The end of life date for PHP 8.0 was November 26, 2023.
-> - If you are still using PHP 7.4 or 8.0, you should upgrade immediately.
-> - The end of life date for PHP 8.1 will be December 31, 2025.
+---
 
-Additionally, make sure that the following extensions are enabled in your PHP:
+## 👤 Usuario por defecto
 
-- json (enabled by default - don't turn it off)
-- [mysqlnd](http://php.net/manual/en/mysqlnd.install.php) if you plan to use MySQL
-- [libcurl](http://php.net/manual/en/curl.requirements.php) if you plan to use the HTTP\CURLRequest library
+El script incluye un usuario administrador listo para iniciar sesión:
+
+| Campo | Valor |
+|---|---|
+| **Usuario** | `admin` |
+| **Contraseña** | `admin123` *(ver nota abajo)* |
+| **Tipo** | Administrador (`tipo = 1`) |
+
+> ⚠️ La contraseña está hasheada con `bcrypt` (`password_hash` de PHP). Si necesitas cambiarla, genera un nuevo hash desde PHP:
+> ```php
+> echo password_hash('tu_nueva_contraseña', PASSWORD_BCRYPT);
+> ```
+> Luego actualiza el campo `password` directamente en la tabla `tbl_users`.
+
+---
+
+## 📦 Datos de ejemplo
+
+El script trae datos de prueba para que puedas explorar el sistema de inmediato:
+
+- **5 productos** registrados (gafas, casacas, camisas, zapatillas)
+- **4 ventas** realizadas con sus respectivos detalles
+- **4 egresos** de compra de materiales
+
+---
+
+## 🔗 Relaciones entre tablas
+
+```
+tbl_users          tbl_egreso
+     |                  |
+     |            (sin FK, independiente)
+     |
+tbl_producto ─────────────┐
+                          │
+tbl_venta ────────────────┤
+                          ▼
+                  tbl_detalle_venta
+```
+
+`tbl_detalle_venta` depende de `tbl_venta` y `tbl_producto`, por eso el script las crea en el orden correcto para respetar las claves foráneas.
+
+---
+
+## 🛠️ Notas adicionales
+
+- El charset de la base de datos es `utf8` / `utf8_unicode_ci`.
+- Todos los campos `status` usan `tinyint(1)`: `1` = activo, `0` = inactivo.
+- El campo `costo_delivery` en `tbl_detalle_venta` está disponible si tu negocio maneja envíos.
+
+---
+
+## 📄 Licencia
+
+Proyecto de uso libre. Modifícalo según las necesidades de tu negocio. 😊
