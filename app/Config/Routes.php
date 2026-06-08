@@ -14,16 +14,6 @@ $routes->get('/login', 'AuthController::index');
 $routes->post('/login/authenticate', 'AuthController::authenticate');
 $routes->get('/logout', 'AuthController::logout');
 
-// DEBUG TEMPORAL - PÚBLICO
-$routes->get('debug-db', function () {
-    return service('response')->setJSON([
-        'DB_HOST' => getenv('DB_HOST'),
-        'DB_NAME' => getenv('DB_NAME'),
-        'DB_USER' => getenv('DB_USER'),
-        'DB_PORT' => getenv('DB_PORT'),
-    ]);
-});
-
 // =====================================================================
 //  RUTAS PROTEGIDAS (requieren autenticación)
 // =====================================================================
