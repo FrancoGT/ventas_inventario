@@ -74,24 +74,13 @@ class Database extends Config
             return;
         }
 
-        $this->default['hostname'] = env('database.default.hostname', 'localhost');
-        $this->default['username'] = env('database.default.username', 'root');
-        $this->default['password'] = env('database.default.password', '');
-        $this->default['database'] = env('database.default.database', '');
-        $this->default['DBDriver'] = env('database.default.DBDriver', 'MySQLi');
-        $this->default['DBPrefix'] = env('database.default.DBPrefix', '');
-        $this->default['port']     = (int) env('database.default.port', 3306);
+        $this->default['hostname'] = getenv('DB_HOST') ?: 'localhost';
+        $this->default['database'] = getenv('DB_NAME') ?: '';
+        $this->default['username'] = getenv('DB_USER') ?: 'root';
+        $this->default['password'] = getenv('DB_PASS') ?: '';
+        $this->default['port']     = (int) (getenv('DB_PORT') ?: 3306);
+        $this->default['DBDriver'] = 'MySQLi';
 
-        $sslVerify = filter_var(env('database.default.ssl_verify', false), FILTER_VALIDATE_BOOLEAN);
-        $sslCA     = env('database.default.ssl_ca', '');
-
-        if ($sslVerify && $sslCA !== '') {
-            $this->default['encrypt'] = [
-                'ssl_verify' => true,
-                'ssl_ca'     => $sslCA,
-            ];
-        } else {
-            $this->default['encrypt'] = false;
-        }
+        $this->default['encrypt'] = false;
     }
 }
