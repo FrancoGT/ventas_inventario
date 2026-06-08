@@ -1390,3 +1390,39 @@ nav ul, nav ol, nav ul li, nav ol li {
 .btn-warning i {
     color: #fff !important;
 }
+
+/* ============================================
+   TABLAS RESPONSIVE SOLO EN CELULAR
+   Scroll lateral en pantallas pequeñas
+   ============================================ */
+@media (max-width: 576px) {
+
+    .table-responsive,
+    .dataTables_wrapper {
+        width: 100%;
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .table-responsive table,
+    .dataTables_wrapper table,
+    table.table {
+        min-width: 700px;
+        width: 100%;
+        white-space: nowrap;
+    }
+
+    .card-body {
+        overflow-x: hidden;
+    }
+
+    .table td,
+    .table th {
+        white-space: nowrap;
+    }
+
+    .dataTables_wrapper .row {
+        min-width: 700px;
+    }
+}
