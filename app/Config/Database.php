@@ -12,11 +12,11 @@ class Database extends Config
 
     public array $default = [
         'DSN'          => '',
-        'hostname'     => env('DB_HOST', 'localhost'),
-        'username'     => env('DB_USER', ''),
-        'password'     => env('DB_PASS', ''),
-        'database'     => env('DB_NAME', ''),
-        'DBDriver'     => env('DB_DRIVER', 'MySQLi'),
+        'hostname'     => '',
+        'username'     => '',
+        'password'     => '',
+        'database'     => '',
+        'DBDriver'     => 'MySQLi',
         'DBPrefix'     => '',
         'pConnect'     => false,
         'DBDebug'      => true,
@@ -27,7 +27,7 @@ class Database extends Config
         'compress'     => false,
         'strictOn'     => false,
         'failover'     => [],
-        'port'         => (int) env('DB_PORT', 3306),
+        'port'         => 3306,
         'numberNative' => false,
         'foundRows'    => false,
         'dateFormat'   => [
@@ -71,6 +71,27 @@ class Database extends Config
 
         if (ENVIRONMENT === 'testing') {
             $this->defaultGroup = 'tests';
+            return;
+        }
+
+        $this->default['hostname'] = env('database.default.hostname', 'localhost');
+        $this->default['username'] = env('database.default.username', 'root');
+        $this->default['password'] = env('database.default.password', '');
+        $this->default['database'] = env('database.default.database', '');
+        $this->default['DBDriver'] = env('database.default.DBDriver', 'MySQLi');
+        $this->default['DBPrefix'] = env('database.default.DBPrefix', '');
+        $this->default['port']     = (int) env('database.default.port', 3306);
+
+        $sslVerify = filter_var(env('database.default.ssl_verify', false), FILTER_VALIDATE_BOOLEAN);
+        $sslCA     = env('database.default.ssl_ca', '');
+
+        if ($sslVerify && $sslCA !== '') {
+            $this->default['encrypt'] = [
+                'ssl_verify' => true,
+                'ssl_ca'     => $sslCA,
+            ];
+        } else {
+            $this->default['encrypt'] = false;
         }
     }
 }
