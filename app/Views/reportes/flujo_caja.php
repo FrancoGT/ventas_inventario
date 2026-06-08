@@ -77,7 +77,7 @@
         <div class="col-md-3">
             <div class="card text-center">
                 <div class="card-body">
-                    <h6 class="text-muted">Prendas</h6>
+                    <h6 class="text-muted">Productos</h6>
                     <h4 id="total_prendas">0</h4>
                 </div>
             </div>
