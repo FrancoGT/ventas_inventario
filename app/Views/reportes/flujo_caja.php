@@ -96,7 +96,7 @@
                             <th>Fecha</th>
                             <th>Día</th>
                             <th>Ingresos</th>
-                            <th>Prendas</th>
+                            <th>Productos</th>
                             <th>Egresos</th>
                             <th>Saldo día</th>
                         </tr>
