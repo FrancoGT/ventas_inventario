@@ -50,6 +50,12 @@
                 </a>
             </li>
             <li class="sidebar-nav-item">
+                <a class="sidebar-nav-link <?= url_is('clientes*') ? 'active' : '' ?>" href="<?= base_url('clientes') ?>">
+                    <i class="fas fa-users"></i>
+                    <span>Clientes</span>
+                </a>
+            </li>
+            <li class="sidebar-nav-item">
                 <a class="sidebar-nav-link <?= url_is('egresos*') ? 'active' : '' ?>" href="/egresos">
                     <i class="fas fa-money-bill-wave"></i>
                     <span>Egresos</span>

@@ -35,6 +35,18 @@ $routes->group('', ['filter' => 'auth'], static function ($routes) {
         $routes->post('listar', 'VentaController::listar');
         $routes->post('guardar', 'VentaController::guardar');
         $routes->post('detalle/(:num)', 'VentaController::detalle/$1');
+        $routes->post('anular/(:num)', 'VentaController::anular/$1');
+        $routes->get('comprobante/(:num)', 'VentaController::comprobante/$1');
+    });
+
+    $routes->group('clientes', static function ($routes) {
+        $routes->get('/', 'ClienteController::index');
+        $routes->post('listar', 'ClienteController::listar');
+        $routes->post('buscar', 'ClienteController::buscar');
+        $routes->post('guardar', 'ClienteController::guardar');
+        $routes->post('editar/(:num)', 'ClienteController::editar/$1');
+        $routes->post('actualizar', 'ClienteController::actualizar');
+        $routes->post('eliminar', 'ClienteController::eliminar');
     });
 
     $routes->group('egresos', static function ($routes) {
