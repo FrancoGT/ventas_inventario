@@ -88,15 +88,23 @@ class VentaPagoModel extends Model
             return [];
         }
 
-        $filas = $this->select('tbl_venta_pago.id_venta, mp.nombre AS metodo_pago_nombre')
+        // NO usar GROUP BY aquí. En MySQL/Aiven con ONLY_FULL_GROUP_BY
+        // seleccionar mp.nombre agrupando solo por id_venta provoca error SQL 1055.
+        // Ordenamos por venta y por PK del pago, y conservamos el primer pago
+        // de cada venta (que es la misma regla usada por getMetodoPrincipal()).
+        $filas = $this->select('tbl_venta_pago.id_venta, tbl_venta_pago.id_venta_pago, mp.nombre AS metodo_pago_nombre')
                       ->join('tbl_metodo_pago AS mp', 'mp.id_metodo_pago = tbl_venta_pago.id_metodo_pago')
                       ->whereIn('tbl_venta_pago.id_venta', $idsVenta)
-                      ->groupBy('tbl_venta_pago.id_venta')
+                      ->orderBy('tbl_venta_pago.id_venta', 'ASC')
+                      ->orderBy('tbl_venta_pago.id_venta_pago', 'ASC')
                       ->findAll();
 
         $mapa = [];
         foreach ($filas as $fila) {
-            $mapa[(int) $fila->id_venta] = $fila->metodo_pago_nombre;
+            $idVenta = (int) $fila->id_venta;
+            if (!array_key_exists($idVenta, $mapa)) {
+                $mapa[$idVenta] = $fila->metodo_pago_nombre;
+            }
         }
 
         return $mapa;

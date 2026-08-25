@@ -68,81 +68,111 @@ class VentaController extends BaseController
             return $this->jsonError('Acceso no permitido', 403);
         }
 
-        $ventas = $this->ventaModel->getParaDatatables();
+        try {
+            $ventas = $this->ventaModel->getParaDatatables();
 
-        $idsVenta = array_map(fn($v) => (int) $v->id_venta, $ventas);
-
-        $comprobanteModel   = new ComprobanteModel();
-        $ventaClienteModel  = new VentaClienteModel();
-        $ventaDeliveryModel = new VentaDeliveryModel();
-        $ventaPagoModel     = new VentaPagoModel();
-
-        $numerosComerciales = $comprobanteModel->getNumerosComercialesPorVentas($idsVenta);
-        $clientesPorVenta   = $ventaClienteModel->getClientesPorVentas($idsVenta);
-        $deliveryPorVenta   = $ventaDeliveryModel->getCostosPorVentas($idsVenta);
-        $metodosPorVenta    = $ventaPagoModel->getMetodosPorVentas($idsVenta);
-
-        $data = [];
-
-        foreach ($ventas as $venta) {
-            $idVenta  = (int) $venta->id_venta;
-            $detalles = $this->detalleModel->getPorVenta($idVenta);
-
-            $subtotal = 0.0;
-            $prendas  = 0;
-            foreach ($detalles as $d) {
-                $subtotal += VentaModel::subtotalLinea((float) $d->costo_venta, (int) $d->cantidad);
-                $prendas  += (int) $d->cantidad;
+            // Si no existen ventas, no hacemos consultas whereIn() innecesarias.
+            if (empty($ventas)) {
+                return $this->response->setJSON([
+                    'data'            => [],
+                    'recordsTotal'    => 0,
+                    'recordsFiltered' => 0,
+                ]);
             }
 
-            $delivery = $deliveryPorVenta[$idVenta] ?? 0.0;
-            $total    = $subtotal + $delivery;
+            $idsVenta = array_map(static fn($v) => (int) $v->id_venta, $ventas);
 
-            $esActiva = (int) $venta->status === VentaModel::ACTIVO;
+            $comprobanteModel   = new ComprobanteModel();
+            $ventaClienteModel  = new VentaClienteModel();
+            $ventaDeliveryModel = new VentaDeliveryModel();
+            $ventaPagoModel     = new VentaPagoModel();
 
-            $cliente = $clientesPorVenta[$idVenta] ?? null;
-            $nombreCliente = $cliente ? $cliente->nombres_apellidos : 'Publico General';
+            $numerosComerciales = $comprobanteModel->getNumerosComercialesPorVentas($idsVenta);
+            $clientesPorVenta   = $ventaClienteModel->getClientesPorVentas($idsVenta);
+            $deliveryPorVenta   = $ventaDeliveryModel->getCostosPorVentas($idsVenta);
+            $metodosPorVenta    = $ventaPagoModel->getMetodosPorVentas($idsVenta);
 
-            $numeroComercial = $numerosComerciales[$idVenta] ?? ('#' . $idVenta);
-            $metodoPago      = $metodosPorVenta[$idVenta] ?? '—';
+            $data = [];
 
-            $acciones = '<button class="btn btn-sm btn-info text-white btn-detalle" data-id="' . $idVenta . '">
-                            <i class="fas fa-eye"></i> Ver
-                         </button> ';
+            foreach ($ventas as $venta) {
+                $idVenta  = (int) $venta->id_venta;
+                $detalles = $this->detalleModel->getPorVenta($idVenta);
 
-            $acciones .= '<a class="btn btn-sm btn-secondary" target="_blank" href="'
-                . base_url('ventas/comprobante/' . $idVenta) . '">
-                            <i class="fas fa-print"></i> Imprimir
-                         </a> ';
+                $subtotal = 0.0;
+                $prendas  = 0;
+                foreach ($detalles as $d) {
+                    $subtotal += VentaModel::subtotalLinea((float) $d->costo_venta, (int) $d->cantidad);
+                    $prendas  += (int) $d->cantidad;
+                }
 
-            if ($esActiva) {
-                $acciones .= '<button class="btn btn-sm btn-danger btn-anular" data-id="' . $idVenta . '">
-                                <i class="fas fa-ban"></i> Anular
-                             </button>';
+                $delivery = (float) ($deliveryPorVenta[$idVenta] ?? 0.0);
+                $total    = $subtotal + $delivery;
+
+                $esActiva = (int) $venta->status === VentaModel::ACTIVO;
+
+                $cliente       = $clientesPorVenta[$idVenta] ?? null;
+                $nombreCliente = $cliente ? $cliente->nombres_apellidos : 'Público General';
+
+                $numeroComercial = $numerosComerciales[$idVenta] ?? ('#' . $idVenta);
+                $metodoPago      = $metodosPorVenta[$idVenta] ?? '—';
+
+                $acciones = '<button class="btn btn-sm btn-info text-white btn-detalle" data-id="' . $idVenta . '">
+                                <i class="fas fa-eye"></i> Ver
+                             </button> ';
+
+                $acciones .= '<a class="btn btn-sm btn-secondary" target="_blank" href="'
+                    . base_url('ventas/comprobante/' . $idVenta) . '">
+                                <i class="fas fa-print"></i> Imprimir
+                             </a> ';
+
+                if ($esActiva) {
+                    $acciones .= '<button class="btn btn-sm btn-danger btn-anular" data-id="' . $idVenta . '">
+                                    <i class="fas fa-ban"></i> Anular
+                                 </button>';
+                }
+
+                $data[] = [
+                    'id_venta'         => $idVenta,
+                    'numero_comercial' => $numeroComercial,
+                    'fecha'            => $venta->fecha,
+                    'cliente'          => esc($nombreCliente),
+                    'prendas'          => $prendas,
+                    'total'            => VentaModel::formatoNumerico($total),
+                    'metodo_pago'      => esc($metodoPago),
+                    'estado'           => $esActiva
+                        ? '<span class="badge bg-success">ACTIVA</span>'
+                        : '<span class="badge bg-danger">ANULADA</span>',
+                    'acciones'         => $acciones,
+                ];
             }
 
-            $data[] = [
-                'id_venta'         => $idVenta,
-                'numero_comercial' => $numeroComercial,
-                'fecha'            => $venta->fecha,
-                'cliente'          => esc($nombreCliente),
-                'prendas'          => $prendas,
-                'total'            => VentaModel::formatoNumerico($total),
-                'metodo_pago'      => esc($metodoPago),
-                'estado'           => $esActiva
-                    ? '<span class="badge bg-success">ACTIVA</span>'
-                    : '<span class="badge bg-danger">ANULADA</span>',
-                'acciones'         => $acciones,
-            ];
+            return $this->response->setJSON([
+                'data'            => $data,
+                'recordsTotal'    => count($ventas),
+                'recordsFiltered' => count($ventas),
+            ]);
+        } catch (\Throwable $e) {
+            // En producción no exponemos credenciales ni trazas al navegador,
+            // pero sí dejamos el error exacto en writable/logs/log-YYYY-MM-DD.log.
+            log_message(
+                'error',
+                'Error en POST /ventas/listar: {message} en {file}:{line}',
+                [
+                    'message' => $e->getMessage(),
+                    'file'    => $e->getFile(),
+                    'line'    => $e->getLine(),
+                ]
+            );
+
+            return $this->response
+                ->setStatusCode(500)
+                ->setJSON([
+                    'data'            => [],
+                    'recordsTotal'    => 0,
+                    'recordsFiltered' => 0,
+                    'error'           => 'Error interno al listar ventas. Revise writable/logs para ver la excepción exacta.',
+                ]);
         }
-
-        $totalRegistros = $this->ventaModel->countAllResults();
-
-        return $this->response->setJSON([
-            'data'            => $data,
-            'recordsTotal'    => $totalRegistros,
-            'recordsFiltered' => count($data),
-        ]);
     }
 
     // ----------------------------------------------------------------
@@ -171,6 +201,12 @@ class VentaController extends BaseController
         $count = count($productos);
         if (count($cantidades) !== $count || count($costosVenta) !== $count) {
             return $this->jsonError('Datos de productos incompletos.');
+        }
+
+        $clienteModel = new ClienteModel();
+        $cliente = $clienteModel->find($idCliente);
+        if (!$cliente || (int) $cliente->status !== ClienteModel::ACTIVO) {
+            return $this->jsonError('Seleccione un cliente válido.');
         }
 
         $metodoPagoModel = new MetodoPagoModel();
