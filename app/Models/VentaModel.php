@@ -4,6 +4,27 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
+/**
+ * Modelo para tbl_venta (backup.sql) — cabecera de venta.
+ *
+ * Columnas reales: id_venta, fecha, status.
+ *
+ * El resto de la información de negocio (cliente, delivery, método de
+ * pago, comprobante/número comercial, stock, anulación, historial)
+ * vive en tablas relacionadas y se maneja desde sus modelos dedicados:
+ *   - VentaClienteModel     (tbl_venta_cliente)
+ *   - VentaDeliveryModel    (tbl_venta_delivery)
+ *   - VentaPagoModel        (tbl_venta_pago)
+ *   - ComprobanteModel      (tbl_comprobante) + CorrelativoModel (tbl_correlativo)
+ *   - VentaAnulacionModel   (tbl_venta_anulacion)
+ *   - VentaHistorialModel   (tbl_venta_historial)
+ *   - StockModel / StockMovimientoModel (tbl_stock, tbl_stock_movimiento)
+ *
+ * IMPORTANTE: el delivery ya NO se maneja por línea de producto.
+ * costo_delivery en tbl_detalle_venta es una columna heredada que
+ * siempre debe permanecer en 0.00; el único delivery válido de una
+ * venta es el de tbl_venta_delivery (cargo único por venta completa).
+ */
 class VentaModel extends Model
 {
     protected $table            = 'tbl_venta';
@@ -11,34 +32,34 @@ class VentaModel extends Model
 
     protected $allowedFields    = [
         'fecha',
-        'status',       // ← existente en la tabla
-        // 'id_user',   // ✘ NO existe en tbl_venta; agrégalo solo si añades la columna
+        'status',
     ];
 
     protected $returnType       = 'object';
     protected $useTimestamps    = false;
 
-    // Valor por defecto para registros activos
+    // Estados de tbl_venta.status (los únicos que contempla backup.sql)
     const ACTIVO   = 1;
-    const INACTIVO = 0;
+    const INACTIVO = 0; // Venta ANULADA
 
     // ----------------------------------------------------------------
     //  LISTADOS
     // ----------------------------------------------------------------
 
     /**
-     * Listado para DataTables (solo registros activos).
+     * Listado para DataTables. Incluye tanto activas como anuladas,
+     * para que el panel de ventas pueda mostrar el estado real y
+     * diferenciar las acciones disponibles.
      */
     public function getParaDatatables(): array
     {
         return $this->select('id_venta, fecha, status')
-                    ->where('status', self::ACTIVO)
                     ->orderBy('id_venta', 'DESC')
                     ->findAll();
     }
 
     /**
-     * Fechas únicas de venta (solo activas).
+     * Fechas únicas de venta (solo activas) — usado en reportes.
      */
     public function listaFechasVenta(): array
     {
@@ -54,11 +75,10 @@ class VentaModel extends Model
     // ----------------------------------------------------------------
 
     /**
-     * Guardar venta y devolver ID.
+     * Guardar cabecera de venta y devolver ID.
      */
     public function guardar(array $data): int
     {
-        // Asegurar que status se setee si no viene
         if (!isset($data['status'])) {
             $data['status'] = self::ACTIVO;
         }
@@ -68,11 +88,22 @@ class VentaModel extends Model
     }
 
     /**
-     * Anular venta (soft delete cambiando status).
+     * Anular venta (cambia status a INACTIVO). El Controller es
+     * responsable de registrar el motivo (tbl_venta_anulacion), el
+     * historial (tbl_venta_historial) y de reponer el stock.
      */
     public function anular(int $idVenta): bool
     {
         return $this->update($idVenta, ['status' => self::INACTIVO]);
+    }
+
+    /**
+     * Indica si una venta está activa (no anulada).
+     */
+    public function estaActiva(int $idVenta): bool
+    {
+        $venta = $this->find($idVenta);
+        return $venta && (int) $venta->status === self::ACTIVO;
     }
 
     // ----------------------------------------------------------------
@@ -99,7 +130,9 @@ class VentaModel extends Model
     }
 
     /**
-     * Reporte por una fecha con detalle.
+     * Reporte por una fecha con detalle. El delivery ya NO se suma por
+     * línea: se obtiene aparte, una vez por venta, desde
+     * tbl_venta_delivery (ver ReporteController / VentaController).
      */
     public function reportePorFecha(string $fecha, array $filtros = []): array
     {
@@ -109,7 +142,7 @@ class VentaModel extends Model
         $query = $db->query(
             "SELECT v.id_venta, v.fecha, v.status AS venta_status,
                     d.id_detalle_venta, d.id_producto, d.cantidad,
-                    d.costo_venta, d.costo_delivery, d.status AS detalle_status
+                    d.costo_venta, d.status AS detalle_status
              FROM tbl_venta AS v
              INNER JOIN tbl_detalle_venta AS d ON v.id_venta = d.id_venta
              WHERE v.fecha = ?
@@ -143,7 +176,9 @@ class VentaModel extends Model
     }
 
     /**
-     * Total de ventas (monto) en una fecha.
+     * Total de ventas (monto) en una fecha: subtotal de productos +
+     * delivery único por venta (tbl_venta_delivery), sin duplicar el
+     * delivery por cada línea de producto.
      */
     public function totalVentasPorFecha(string $fecha, array $filtros = []): float
     {
@@ -151,13 +186,21 @@ class VentaModel extends Model
 
         $db    = \Config\Database::connect();
         $query = $db->query(
-            "SELECT COALESCE(SUM((d.costo_venta * d.cantidad) + d.costo_delivery), 0) AS total_ventas
-             FROM tbl_venta AS v
-             INNER JOIN tbl_detalle_venta AS d ON v.id_venta = d.id_venta
-             WHERE v.fecha = ?
-               AND v.status = ?
-               AND d.status = ?" . $sqlExtra,
-            array_merge([$fecha, self::ACTIVO, self::ACTIVO], $extraBinds)
+            "SELECT
+                COALESCE((
+                    SELECT SUM(d.costo_venta * d.cantidad)
+                    FROM tbl_detalle_venta d
+                    INNER JOIN tbl_venta v2 ON v2.id_venta = d.id_venta
+                    WHERE v2.fecha = ? AND v2.status = ? AND d.status = ?" . $sqlExtra . "
+                ), 0)
+                +
+                COALESCE((
+                    SELECT SUM(vd.costo_delivery)
+                    FROM tbl_venta_delivery vd
+                    INNER JOIN tbl_venta v3 ON v3.id_venta = vd.id_venta
+                    WHERE v3.fecha = ? AND v3.status = ?
+                ), 0) AS total_ventas",
+            array_merge([$fecha, self::ACTIVO, self::ACTIVO], $extraBinds, [$fecha, self::ACTIVO])
         );
 
         return (float) $query->getRow()->total_ventas;
@@ -174,7 +217,7 @@ class VentaModel extends Model
         $query = $db->query(
             "SELECT v.id_venta, v.fecha, v.status AS venta_status,
                     d.id_detalle_venta, d.id_producto, d.cantidad,
-                    d.costo_venta, d.costo_delivery, d.status AS detalle_status
+                    d.costo_venta, d.status AS detalle_status
              FROM tbl_venta AS v
              INNER JOIN tbl_detalle_venta AS d ON v.id_venta = d.id_venta
              WHERE v.fecha BETWEEN ? AND ?
@@ -208,7 +251,8 @@ class VentaModel extends Model
     }
 
     /**
-     * Total ventas (monto) entre dos fechas.
+     * Total ventas (monto) entre dos fechas: subtotal de productos +
+     * delivery único por venta.
      */
     public function totalVentasEntreFechas(string $fechaInicio, string $fechaFin, array $filtros = []): float
     {
@@ -216,13 +260,25 @@ class VentaModel extends Model
 
         $db    = \Config\Database::connect();
         $query = $db->query(
-            "SELECT COALESCE(SUM((d.costo_venta * d.cantidad) + d.costo_delivery), 0) AS total_ventas
-             FROM tbl_venta AS v
-             INNER JOIN tbl_detalle_venta AS d ON v.id_venta = d.id_venta
-             WHERE v.fecha BETWEEN ? AND ?
-               AND v.status = ?
-               AND d.status = ?" . $sqlExtra,
-            array_merge([$fechaInicio, $fechaFin, self::ACTIVO, self::ACTIVO], $extraBinds)
+            "SELECT
+                COALESCE((
+                    SELECT SUM(d.costo_venta * d.cantidad)
+                    FROM tbl_detalle_venta d
+                    INNER JOIN tbl_venta v2 ON v2.id_venta = d.id_venta
+                    WHERE v2.fecha BETWEEN ? AND ? AND v2.status = ? AND d.status = ?" . $sqlExtra . "
+                ), 0)
+                +
+                COALESCE((
+                    SELECT SUM(vd.costo_delivery)
+                    FROM tbl_venta_delivery vd
+                    INNER JOIN tbl_venta v3 ON v3.id_venta = vd.id_venta
+                    WHERE v3.fecha BETWEEN ? AND ? AND v3.status = ?
+                ), 0) AS total_ventas",
+            array_merge(
+                [$fechaInicio, $fechaFin, self::ACTIVO, self::ACTIVO],
+                $extraBinds,
+                [$fechaInicio, $fechaFin, self::ACTIVO]
+            )
         );
 
         return (float) $query->getRow()->total_ventas;
@@ -302,6 +358,21 @@ class VentaModel extends Model
         return date('Y-m-t', strtotime($fecha));
     }
 
+    /**
+     * Subtotal de UNA línea de producto (cantidad x precio unitario).
+     * Ya NO incluye delivery: el delivery es un cargo único de la venta
+     * completa (ver VentaDeliveryModel), no por línea de producto.
+     */
+    public static function subtotalLinea(float $costoVenta, int $cantidad): float
+    {
+        return $costoVenta * $cantidad;
+    }
+
+    /**
+     * Compatibilidad retro: firma anterior con costoDelivery ignorado
+     * (siempre 0 en la nueva estructura). Se mantiene para no romper
+     * llamadas existentes, pero el cálculo correcto es subtotalLinea().
+     */
     public static function subtotal(float $costoVenta, float $costoDelivery, int $cantidad): float
     {
         return ($costoVenta * $cantidad) + $costoDelivery;
