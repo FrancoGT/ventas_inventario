@@ -126,4 +126,19 @@ class ProductoModel extends Model
             'precio'      => $producto->precio,
         ];
     }
+
+    /**
+     * Buscar productos
+     */
+    public function buscar(string $termino, int $limite = 15): array
+    {
+        return $this->where('estado_producto', 1)
+            ->groupStart()
+                ->like('nombre', $termino)
+                ->orLike('codigo_barras', $termino)
+            ->groupEnd()
+            ->orderBy('nombre', 'ASC')
+            ->limit($limite)
+            ->findAll();
+    }
 }

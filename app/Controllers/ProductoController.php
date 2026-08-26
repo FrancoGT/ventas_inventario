@@ -210,4 +210,19 @@ class ProductoController extends BaseController
             'message' => 'Producto eliminado correctamente'
         ]);
     }
+
+    public function buscar()
+    {
+        $termino = trim((string)$this->request->getPost('termino'));
+
+        if ($termino === '') {
+            return $this->response->setJSON(['data'=>[]]);
+        }
+
+        $productos = $this->productoModel->buscar($termino);
+
+        return $this->response->setJSON([
+            'data'=>$productos
+        ]);
+    }
 }
