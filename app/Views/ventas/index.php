@@ -360,11 +360,7 @@ function registrarEventosVentas() {
     $('#costo_delivery').on('input', recalcularTotalesVenta);
 
     $('#tbodyDetalle').on('input', '.buscar-producto', function () {
-        filtrarProductos($(this));
-    });
-
-    $('#tbodyDetalle').on('change input', '.buscar-producto', function () {
-        seleccionarProductoEnFila($(this).closest('tr'));
+        buscarProductosVenta($(this));
     });
 
     $('#tbodyDetalle').on('input', '.input-cantidad, .input-precio', function () {
@@ -456,63 +452,75 @@ function inicializarBuscadoresDinamicos() {
     });
 }
 
-function filtrarProductos(input) {
+function buscarProductosVenta(input) {
     const fila = input.closest('tr');
-    const texto = input.val().toLowerCase();
-    const opciones = fila.find('.resultado-producto option');
-    opciones.each(function () {
-        const visible = !texto || $(this).text().toLowerCase().includes(texto);
-        $(this).toggle(visible);
+    const termino = input.val().trim();
+    const contenedor = fila.find('.resultado-productos');
+
+    contenedor.empty();
+    fila.find('.input-producto-id').val('');
+
+    if (termino.length < 2) {
+        return;
+    }
+
+    $.ajax({
+        url: URL_PRODUCTOS_BUSCAR,
+        type: 'POST',
+        dataType: 'json',
+        data: {
+            termino: termino
+        },
+        success: function (resp) {
+
+            const productos = resp.data || [];
+
+            contenedor.empty();
+
+            if (!productos.length) {
+                contenedor.html(
+                    '<div class="list-group-item text-muted">Sin resultados</div>'
+                );
+                return;
+            }
+
+            productos.forEach(function (p) {
+
+                const boton = $('<button type="button" class="list-group-item list-group-item-action"></button>');
+
+                boton.text(
+                    p.nombre + (p.codigo_barras ? ' - ' + p.codigo_barras : '')
+                );
+
+                boton.on('click', function () {
+
+                    fila.find('.buscar-producto').val(p.nombre);
+
+                    fila.find('.input-producto-id')
+                        .val(p.id_producto);
+
+                    fila.find('.input-precio')
+                        .val(Number(p.precio).toFixed(2));
+
+                    fila.find('.resultado-productos')
+                        .empty();
+
+                    recalcularFilaVenta(fila);
+                });
+
+                contenedor.append(boton);
+            });
+        },
+        error: function (xhr) {
+            console.error(
+                'Error buscando productos:',
+                xhr.status,
+                xhr.responseText
+            );
+        }
     });
 }
 
-
-function buscarProductosVenta(input) {
-    const termino = input.val().trim();
-    const fila = input.closest('tr');
-    const contenedor = fila.find('.resultado-productos');
-    contenedor.empty();
-
-    if (termino.length < 2) return;
-
-    $.post(URL_PRODUCTOS_BUSCAR, { termino: termino }, function (resp) {
-        const productos = resp.data || [];
-        if (!productos.length) {
-            contenedor.html('<div class="list-group-item text-muted">Sin resultados</div>');
-            return;
-        }
-
-        productos.forEach(function (p) {
-            const btn = $('<button type="button" class="list-group-item list-group-item-action"></button>');
-            btn.text(p.nombre);
-            btn.data('producto', p);
-            contenedor.append(btn);
-        });
-    }, 'json');
-}
-
-function seleccionarProductoAjax(btn) {
-    const fila = btn.closest('tr');
-    const p = btn.data('producto');
-
-    fila.find('.buscar-producto').val(p.nombre);
-    fila.find('.input-producto-id').val(p.id_producto);
-    fila.find('.input-precio').val(Number(p.precio).toFixed(2));
-    fila.find('.stock-valor').text('—');
-    fila.find('.resultado-productos').empty();
-
-    const existe = productosDisponibles.find(x => x.id === Number(p.id_producto));
-    if (!existe) {
-        productosDisponibles.push({
-            id: Number(p.id_producto),
-            nombre: p.nombre,
-            codigo: p.codigo_barras || '',
-            precio: Number(p.precio),
-            stock: 999999
-        });
-    }
-    recalcularFilaVenta(fila);
-}
 
 function agregarLineaVenta() {
     lineaSecuencia++;

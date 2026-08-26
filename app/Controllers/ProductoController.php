@@ -211,18 +211,34 @@ class ProductoController extends BaseController
         ]);
     }
 
+    /**
+     * AJAX: búsqueda de productos para nueva venta
+    */
     public function buscar()
     {
-        $termino = trim((string)$this->request->getPost('termino'));
+        $termino = trim((string) $this->request->getPost('termino'));
 
         if ($termino === '') {
-            return $this->response->setJSON(['data'=>[]]);
+            return $this->response->setJSON([
+                'data' => []
+            ]);
         }
 
         $productos = $this->productoModel->buscar($termino);
 
+        $data = [];
+
+        foreach ($productos as $p) {
+            $data[] = [
+                'id_producto'   => $p->id_producto,
+                'nombre'        => $p->nombre,
+                'codigo_barras' => $p->codigo_barras,
+                'precio'        => $p->precio
+            ];
+        }
+
         return $this->response->setJSON([
-            'data'=>$productos
+            'data' => $data
         ]);
     }
 }

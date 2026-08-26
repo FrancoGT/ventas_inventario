@@ -128,7 +128,7 @@ class ProductoModel extends Model
     }
 
     /**
-     * Buscar productos
+     * Buscar productos para autocomplete de ventas
      */
     public function buscar(string $termino, int $limite = 15): array
     {
