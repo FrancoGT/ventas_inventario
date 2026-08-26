@@ -23,7 +23,6 @@
                 <table class="table table-hover table-striped" id="tablaClientes" style="width:100%">
                     <thead>
                         <tr>
-                            <th>ID</th>
                             <th>Nombres / Razón Social</th>
                             <th>Tipo Doc.</th>
                             <th>N.º Documento</th>
