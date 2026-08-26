@@ -3,6 +3,8 @@
 namespace App\Controllers;
 
 use App\Models\ProductoModel;
+use App\Models\StockModel;
+use App\Models\StockMovimientoModel;
 
 class ProductoController extends BaseController
 {
@@ -24,6 +26,8 @@ class ProductoController extends BaseController
     public function listar()
     {
         $productos = $this->productoModel->getActivos();
+        $stockModel = new StockModel();
+        $mapaStock = $stockModel->getMapaStock();
         $data = [];
 
         foreach ($productos as $producto) {
@@ -32,7 +36,9 @@ class ProductoController extends BaseController
                 'codigo_barras' => esc($producto->codigo_barras),
                 'nombre'        => esc($producto->nombre),
                 'precio'        => number_format($producto->precio, 2),
+                'stock'         => isset($mapaStock[$producto->id_producto]) ? (int)$mapaStock[$producto->id_producto]->stock_actual : 0,
                 'acciones'      => 
+                    '<button class="btn btn-sm btn-success btn-stock me-1" data-id="' . $producto->id_producto . '" title="Agregar stock"><i class="fas fa-boxes"></i></button> ' .
                     '<button class="btn btn-sm btn-editar" data-id="' . $producto->id_producto . '">
                         <i class="fas fa-edit"></i>
                     </button> ' .
@@ -163,6 +169,27 @@ class ProductoController extends BaseController
             'status' => 'success',
             'message' => 'Producto actualizado correctamente'
         ]);
+    }
+
+    public function agregarStock()
+    {
+        $id = (int)$this->request->getPost('id_producto');
+        $cantidad = (int)$this->request->getPost('cantidad');
+
+        if ($id <= 0 || $cantidad <= 0) {
+            return $this->response->setJSON(['status'=>'error','message'=>'Cantidad inválida']);
+        }
+
+        if (!$this->productoModel->find($id)) {
+            return $this->response->setJSON(['status'=>'error','message'=>'Producto no encontrado']);
+        }
+
+        $stock = new StockModel();
+        $mov = new StockMovimientoModel();
+        $stock->incrementar($id, $cantidad);
+        $mov->registrarAjuste($id, 'INGRESO', $cantidad, 'Carga manual de stock');
+
+        return $this->response->setJSON(['status'=>'success','message'=>'Stock actualizado correctamente']);
     }
 
     public function eliminar()

@@ -29,6 +29,7 @@
                             <th>Código de Barras</th>
                             <th>Nombre</th>
                             <th>Precio (S/)</th>
+                            <th>Stock</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -123,6 +124,7 @@ $(document).ready(function() {
                     return 'S/ ' + parseFloat(data).toFixed(2);
                 }
             },
+            { data: 'stock', className: 'text-center', width: '100px', render: function(data){ return '<span class="badge bg-info">'+data+'</span>'; } },
             { 
                 data: 'acciones',
                 width: '120px',
@@ -203,6 +205,25 @@ $(document).ready(function() {
             },
             complete: function() {
                 btnGuardar.prop('disabled', false).html('<i class="fas fa-save"></i> Guardar');
+            }
+        });
+    });
+
+    $(document).on('click', '.btn-stock', function(){
+        const id=$(this).data('id');
+        Swal.fire({
+            title:'Agregar stock',
+            input:'number',
+            inputLabel:'Cantidad a ingresar',
+            inputAttributes:{min:1},
+            showCancelButton:true,
+            confirmButtonText:'Guardar'
+        }).then((r)=>{
+            if(r.isConfirmed){
+                $.post('<?= base_url('productos/agregar-stock') ?>',{id_producto:id,cantidad:r.value},function(resp){
+                    if(resp.status==='success'){ Swal.fire('OK',resp.message,'success'); tabla.ajax.reload(null,false); }
+                    else Swal.fire('Error',resp.message,'error');
+                },'json');
             }
         });
     });

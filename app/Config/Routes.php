@@ -28,6 +28,7 @@ $routes->group('', ['filter' => 'auth'], static function ($routes) {
         $routes->post('editar/(:num)', 'ProductoController::editar/$1');
         $routes->post('actualizar', 'ProductoController::actualizar');
         $routes->post('eliminar', 'ProductoController::eliminar');
+        $routes->post('agregar-stock', 'ProductoController::agregarStock');
     });
 
     $routes->group('ventas', static function ($routes) {
