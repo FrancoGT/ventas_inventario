@@ -65,8 +65,12 @@
 
                         <div class="col-md-4">
                             <label for="id_metodo_pago" class="form-label">Método de pago <span class="text-danger">*</span></label>
-                            <input type="hidden" id="id_metodo_pago" name="id_metodo_pago" required>
-                            <input type="text" class="form-control buscador-dinamico" id="buscar_metodo_pago" placeholder="Buscar método de pago..." autocomplete="off">
+                            <select class="form-select" id="id_metodo_pago" name="id_metodo_pago" required>
+                                <option value="">Seleccione...</option>
+                                <?php foreach ($metodosPago as $m): ?>
+                                    <option value="<?= (int) $m->id_metodo_pago ?>"><?= esc($m->nombre) ?></option>
+                                <?php endforeach; ?>
+                            </select>
                         </div>
                     </div>
 
@@ -353,11 +357,7 @@ function registrarEventosVentas() {
     $('#costo_delivery').on('input', recalcularTotalesVenta);
 
     $('#tbodyDetalle').on('input', '.buscar-producto', function () {
-        filtrarProductos($(this));
-    });
-
-    $('#tbodyDetalle').on('change', '.resultado-producto', function () {
-        seleccionarProductoEnFila($(this).closest('tr'));
+        buscarProductosVenta($(this));
     });
 
     $('#tbodyDetalle').on('input', '.input-cantidad, .input-precio', function () {
@@ -399,37 +399,46 @@ function registrarEventosVentas() {
     });
 }
 
-function opcionesProductosHtml() {
-    let html = '<option value="">Seleccione...</option>';
-    productosDisponibles.forEach(function (p) {
-        if (p.stock > 0) html += '<option value="' + p.id + '">' + escapeHtml(p.nombre) + '</option>';
-    });
-    return html;
-}
-
 function inicializarBuscadoresDinamicos() {
     $('#buscar_cliente').on('input', function () {
-        const texto = $(this).val().toLowerCase();
-        const encontrado = clientesDisponibles.find(c => c.texto.toLowerCase().includes(texto));
-        $('#id_cliente').val(encontrado ? encontrado.id : '');
+        const input = $(this);
+        $.post('<?= base_url('clientes/buscar') ?>', { termino: input.val() }, function (r) {
+            if (r.data && r.data.length === 1) {
+                $('#id_cliente').val(r.data[0].id_cliente);
+            }
+        }, 'json');
     });
-    $('#buscar_cliente').val('Público General');
 
-    $('#buscar_metodo_pago').on('input', function () {
-        const texto = $(this).val().toLowerCase();
-        const encontrado = metodosPagoDisponibles.find(m => m.texto.toLowerCase().includes(texto));
-        $('#id_metodo_pago').val(encontrado ? encontrado.id : '');
-    });
+    const clienteGenerico = clientesDisponibles.find(c => c.id === <?= (int) \App\Models\ClienteModel::CLIENTE_GENERICO ?>);
+    if (clienteGenerico) {
+        $('#buscar_cliente').val(clienteGenerico.texto);
+    }
 }
 
-function filtrarProductos(input) {
+function buscarProductosVenta(input) {
     const fila = input.closest('tr');
-    const texto = input.val().toLowerCase();
-    const opciones = fila.find('.resultado-producto option');
-    opciones.each(function () {
-        const visible = !texto || $(this).text().toLowerCase().includes(texto);
-        $(this).toggle(visible);
-    });
+    const texto = input.val().trim();
+
+    if (texto.length < 2) {
+        fila.find('.input-producto-id').val('');
+        return;
+    }
+
+    $.post('<?= base_url('productos/buscar') ?>', { termino: texto }, function (r) {
+        const producto = r.data && r.data.length ? r.data[0] : null;
+
+        fila.find('.input-producto-id').val('');
+        fila.find('.stock-valor').text('—');
+        fila.find('.input-precio').val('');
+
+        if (producto) {
+            fila.find('.buscar-producto').val(producto.nombre);
+            fila.find('.input-producto-id').val(producto.id_producto);
+            fila.find('.input-precio').val(Number(producto.precio).toFixed(2));
+            fila.find('.stock-valor').text('Disponible');
+        }
+        recalcularFilaVenta(fila);
+    }, 'json');
 }
 
 function agregarLineaVenta() {
@@ -438,13 +447,13 @@ function agregarLineaVenta() {
     const fila = $(
         '<tr>' +
             '<td class="numero-fila text-center"></td>' +
-            '<td><input type="text" class="form-control form-control-sm buscar-producto" placeholder="Buscar producto..."><select class="form-select form-select-sm resultado-producto mt-1">' + opcionesProductosHtml() + '</select>' +
+            '<td><input type="text" class="form-control form-control-sm buscar-producto" placeholder="Buscar producto..." autocomplete="off">' +
                 '<input type="hidden" name="productos[]" class="input-producto-id"></td>' +
             '<td class="text-center"><span class="stock-valor">—</span></td>' +
             '<td><input type="number" name="cantidades[]" class="form-control form-control-sm text-center input-cantidad" min="1" step="1" value="1" required></td>' +
             '<td><input type="number" name="costos_venta[]" class="form-control form-control-sm text-end input-precio" min="0" step="0.01" value="" required></td>' +
             '<td class="text-end fw-semibold">S/ <span class="subtotal-linea">0.00</span></td>' +
-            '<td class="text-center"><button type="button" class="btn btn-sm btn-outline-danger btn-quitar-linea" title="Quitar"><i class="fas fa-trash"></i></button></td>' +
+            '<td class="text-center"><button type="button" class="btn btn-sm btn-outline-danger btn-quitar-linea"><i class="fas fa-trash"></i></button></td>' +
         '</tr>'
     );
 
@@ -452,44 +461,6 @@ function agregarLineaVenta() {
     renumerarLineas();
     fila.find('.buscar-producto').focus();
     recalcularTotalesVenta();
-}
-
-function seleccionarProductoEnFila(fila) {
-    const id = Number(fila.find('.resultado-producto').val());
-    const producto = productosDisponibles.find(function (p) { return p.id === id; });
-
-    fila.find('.input-producto-id').val('');
-    fila.find('.stock-valor').text('—').removeClass('stock-ok stock-low stock-zero');
-    fila.find('.input-precio').val('');
-
-    if (!producto) {
-        recalcularFilaVenta(fila);
-        return;
-    }
-
-    const repetido = $('#tbodyDetalle .input-producto-id').toArray().some(function (elemento) {
-        return elemento !== fila.find('.input-producto-id')[0] && Number($(elemento).val()) === producto.id;
-    });
-
-    if (repetido) {
-        fila.find('.resultado-producto').val('');
-        Swal.fire({
-            icon: 'warning',
-            title: 'Producto repetido',
-            text: 'Ese producto ya está en la venta. Modifique la cantidad de la fila existente.'
-        });
-        recalcularFilaVenta(fila);
-        return;
-    }
-
-    fila.find('.input-producto-id').val(producto.id);
-    fila.find('.input-precio').val(Number(producto.precio).toFixed(2));
-
-    const stock = fila.find('.stock-valor').text(producto.stock);
-    stock.addClass(producto.stock <= 0 ? 'stock-zero' : (producto.stock <= 3 ? 'stock-low' : 'stock-ok'));
-
-    fila.find('.input-cantidad').attr('max', producto.stock).val(1);
-    recalcularFilaVenta(fila);
 }
 
 function recalcularFilaVenta(fila) {
