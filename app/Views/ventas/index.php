@@ -55,16 +55,8 @@
                         <div class="col-md-5">
                             <label for="id_cliente" class="form-label">Cliente <span class="text-danger">*</span></label>
                             <div class="input-group">
-                                <select class="form-select" id="id_cliente" name="id_cliente" required>
-                                    <?php foreach ($clientes as $cliente): ?>
-                                        <option
-                                            value="<?= (int) $cliente->id_cliente ?>"
-                                            <?= (int) $cliente->id_cliente === \App\Models\ClienteModel::CLIENTE_GENERICO ? 'selected' : '' ?>
-                                        >
-                                            <?= esc($cliente->nombres_apellidos) ?><?= !empty($cliente->numero_documento) ? ' - ' . esc($cliente->numero_documento) : '' ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
+                                <input type="hidden" id="id_cliente" name="id_cliente" value="<?= (int) \App\Models\ClienteModel::CLIENTE_GENERICO ?>">
+                                <input type="text" class="form-control buscador-dinamico" id="buscar_cliente" placeholder="Buscar cliente por nombre o documento..." autocomplete="off" required>
                                 <a href="<?= base_url('clientes') ?>" class="btn btn-outline-secondary" title="Administrar clientes">
                                     <i class="fas fa-users"></i>
                                 </a>
@@ -73,12 +65,8 @@
 
                         <div class="col-md-4">
                             <label for="id_metodo_pago" class="form-label">Método de pago <span class="text-danger">*</span></label>
-                            <select class="form-select" id="id_metodo_pago" name="id_metodo_pago" required>
-                                <option value="">Seleccione...</option>
-                                <?php foreach ($metodosPago as $metodo): ?>
-                                    <option value="<?= (int) $metodo->id_metodo_pago ?>"><?= esc($metodo->nombre) ?></option>
-                                <?php endforeach; ?>
-                            </select>
+                            <input type="hidden" id="id_metodo_pago" name="id_metodo_pago" required>
+                            <input type="text" class="form-control buscador-dinamico" id="buscar_metodo_pago" placeholder="Buscar método de pago..." autocomplete="off">
                         </div>
                     </div>
 
@@ -255,11 +243,26 @@ const productosDisponibles = <?= json_encode(array_map(static function ($p) {
     ];
 }, $productos), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
 
+const clientesDisponibles = <?= json_encode(array_map(static function ($c) {
+    return [
+        'id' => (int) $c->id_cliente,
+        'texto' => (string) $c->nombres_apellidos . (!empty($c->numero_documento) ? ' - ' . $c->numero_documento : ''),
+    ];
+}, $clientes), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
+
+const metodosPagoDisponibles = <?= json_encode(array_map(static function ($m) {
+    return [
+        'id' => (int) $m->id_metodo_pago,
+        'texto' => (string) $m->nombre,
+    ];
+}, $metodosPago), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
+
 $(document).ready(function () {
     modalNuevaVenta = new bootstrap.Modal(document.getElementById('modalNuevaVenta'));
     modalDetalleVenta = new bootstrap.Modal(document.getElementById('modalDetalleVenta'));
 
     inicializarTablaVentas();
+    inicializarBuscadoresDinamicos();
     registrarEventosVentas();
 });
 
@@ -349,7 +352,11 @@ function registrarEventosVentas() {
 
     $('#costo_delivery').on('input', recalcularTotalesVenta);
 
-    $('#tbodyDetalle').on('change', '.select-producto', function () {
+    $('#tbodyDetalle').on('input', '.buscar-producto', function () {
+        filtrarProductos($(this));
+    });
+
+    $('#tbodyDetalle').on('change', '.resultado-producto', function () {
         seleccionarProductoEnFila($(this).closest('tr'));
     });
 
@@ -393,14 +400,36 @@ function registrarEventosVentas() {
 }
 
 function opcionesProductosHtml() {
-    let html = '<option value="">Seleccione un producto...</option>';
+    let html = '<option value="">Seleccione...</option>';
     productosDisponibles.forEach(function (p) {
-        const codigo = p.codigo ? ' [' + escapeHtml(p.codigo) + ']' : '';
-        const agotado = p.stock <= 0 ? ' - SIN STOCK' : ' - Stock: ' + p.stock;
-        html += '<option value="' + p.id + '"' + (p.stock <= 0 ? ' disabled' : '') + '>'
-            + escapeHtml(p.nombre) + codigo + agotado + '</option>';
+        if (p.stock > 0) html += '<option value="' + p.id + '">' + escapeHtml(p.nombre) + '</option>';
     });
     return html;
+}
+
+function inicializarBuscadoresDinamicos() {
+    $('#buscar_cliente').on('input', function () {
+        const texto = $(this).val().toLowerCase();
+        const encontrado = clientesDisponibles.find(c => c.texto.toLowerCase().includes(texto));
+        $('#id_cliente').val(encontrado ? encontrado.id : '');
+    });
+    $('#buscar_cliente').val('Público General');
+
+    $('#buscar_metodo_pago').on('input', function () {
+        const texto = $(this).val().toLowerCase();
+        const encontrado = metodosPagoDisponibles.find(m => m.texto.toLowerCase().includes(texto));
+        $('#id_metodo_pago').val(encontrado ? encontrado.id : '');
+    });
+}
+
+function filtrarProductos(input) {
+    const fila = input.closest('tr');
+    const texto = input.val().toLowerCase();
+    const opciones = fila.find('.resultado-producto option');
+    opciones.each(function () {
+        const visible = !texto || $(this).text().toLowerCase().includes(texto);
+        $(this).toggle(visible);
+    });
 }
 
 function agregarLineaVenta() {
@@ -409,7 +438,7 @@ function agregarLineaVenta() {
     const fila = $(
         '<tr>' +
             '<td class="numero-fila text-center"></td>' +
-            '<td><select class="form-select form-select-sm select-producto">' + opcionesProductosHtml() + '</select>' +
+            '<td><input type="text" class="form-control form-control-sm buscar-producto" placeholder="Buscar producto..."><select class="form-select form-select-sm resultado-producto mt-1">' + opcionesProductosHtml() + '</select>' +
                 '<input type="hidden" name="productos[]" class="input-producto-id"></td>' +
             '<td class="text-center"><span class="stock-valor">—</span></td>' +
             '<td><input type="number" name="cantidades[]" class="form-control form-control-sm text-center input-cantidad" min="1" step="1" value="1" required></td>' +
@@ -421,12 +450,12 @@ function agregarLineaVenta() {
 
     $('#tbodyDetalle').append(fila);
     renumerarLineas();
-    fila.find('.select-producto').focus();
+    fila.find('.buscar-producto').focus();
     recalcularTotalesVenta();
 }
 
 function seleccionarProductoEnFila(fila) {
-    const id = Number(fila.find('.select-producto').val());
+    const id = Number(fila.find('.resultado-producto').val());
     const producto = productosDisponibles.find(function (p) { return p.id === id; });
 
     fila.find('.input-producto-id').val('');
@@ -443,7 +472,7 @@ function seleccionarProductoEnFila(fila) {
     });
 
     if (repetido) {
-        fila.find('.select-producto').val('');
+        fila.find('.resultado-producto').val('');
         Swal.fire({
             icon: 'warning',
             title: 'Producto repetido',
