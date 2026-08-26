@@ -21,7 +21,7 @@
                             <th>Comprobante</th>
                             <th>Fecha</th>
                             <th>Cliente</th>
-                            <th class="text-center">Prendas</th>
+                            <th class="text-center">Unidades</th>
                             <th class="text-end">Total</th>
                             <th>Pago</th>
                             <th class="text-center">Estado</th>
