@@ -24,7 +24,6 @@ $routes->group('', ['filter' => 'auth'], static function ($routes) {
     $routes->group('productos', static function ($routes) {
         $routes->get('/', 'ProductoController::index');
         $routes->post('listar', 'ProductoController::listar');
-        $routes->post('buscar', 'ProductoController::buscar');
         $routes->post('guardar', 'ProductoController::guardar');
         $routes->post('editar/(:num)', 'ProductoController::editar/$1');
         $routes->post('actualizar', 'ProductoController::actualizar');

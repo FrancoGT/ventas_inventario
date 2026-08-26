@@ -51,33 +51,6 @@ class ProductoController extends BaseController
         return $this->response->setJSON(['data' => $data]);
     }
 
-
-    /**
-     * AJAX: búsqueda de productos para autocomplete de ventas.
-     */
-    public function buscar()
-    {
-        $termino = trim((string) $this->request->getPost('termino'));
-
-        if ($termino === '') {
-            return $this->response->setJSON(['data' => []]);
-        }
-
-        $productos = $this->productoModel->buscar($termino);
-        $data = [];
-
-        foreach ($productos as $p) {
-            $data[] = [
-                'id_producto' => (int) $p->id_producto,
-                'nombre' => $p->nombre,
-                'codigo_barras' => $p->codigo_barras,
-                'precio' => $p->precio
-            ];
-        }
-
-        return $this->response->setJSON(['data' => $data]);
-    }
-
     public function guardar()
     {
         $rules = [

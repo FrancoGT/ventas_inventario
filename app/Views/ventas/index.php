@@ -57,6 +57,7 @@
                             <div class="input-group">
                                 <input type="hidden" id="id_cliente" name="id_cliente" value="<?= (int) \App\Models\ClienteModel::CLIENTE_GENERICO ?>">
                                 <input type="text" class="form-control buscador-dinamico" id="buscar_cliente" placeholder="Buscar cliente por nombre o documento..." autocomplete="off" required>
+                                <div id="resultado_clientes" class="list-group position-absolute" style="z-index:1055;"></div>
                                 <a href="<?= base_url('clientes') ?>" class="btn btn-outline-secondary" title="Administrar clientes">
                                     <i class="fas fa-users"></i>
                                 </a>
@@ -357,7 +358,11 @@ function registrarEventosVentas() {
     $('#costo_delivery').on('input', recalcularTotalesVenta);
 
     $('#tbodyDetalle').on('input', '.buscar-producto', function () {
-        buscarProductosVenta($(this));
+        filtrarProductos($(this));
+    });
+
+    $('#tbodyDetalle').on('change input', '.buscar-producto', function () {
+        seleccionarProductoEnFila($(this).closest('tr'));
     });
 
     $('#tbodyDetalle').on('input', '.input-cantidad, .input-precio', function () {
@@ -399,14 +404,19 @@ function registrarEventosVentas() {
     });
 }
 
+function opcionesProductosHtml() {
+    let html = '';
+    productosDisponibles.forEach(function (p) {
+        if (p.stock > 0) html += '<option value="' + escapeHtml(p.nombre) + '"></option>';
+    });
+    return html;
+}
+
 function inicializarBuscadoresDinamicos() {
     $('#buscar_cliente').on('input', function () {
-        const input = $(this);
-        $.post('<?= base_url('clientes/buscar') ?>', { termino: input.val() }, function (r) {
-            if (r.data && r.data.length === 1) {
-                $('#id_cliente').val(r.data[0].id_cliente);
-            }
-        }, 'json');
+        const texto = $(this).val().toLowerCase().trim();
+        const encontrado = clientesDisponibles.find(c => c.texto.toLowerCase() === texto);
+        $('#id_cliente').val(encontrado ? encontrado.id : '');
     });
 
     const clienteGenerico = clientesDisponibles.find(c => c.id === <?= (int) \App\Models\ClienteModel::CLIENTE_GENERICO ?>);
@@ -415,30 +425,14 @@ function inicializarBuscadoresDinamicos() {
     }
 }
 
-function buscarProductosVenta(input) {
+function filtrarProductos(input) {
     const fila = input.closest('tr');
-    const texto = input.val().trim();
-
-    if (texto.length < 2) {
-        fila.find('.input-producto-id').val('');
-        return;
-    }
-
-    $.post('<?= base_url('productos/buscar') ?>', { termino: texto }, function (r) {
-        const producto = r.data && r.data.length ? r.data[0] : null;
-
-        fila.find('.input-producto-id').val('');
-        fila.find('.stock-valor').text('—');
-        fila.find('.input-precio').val('');
-
-        if (producto) {
-            fila.find('.buscar-producto').val(producto.nombre);
-            fila.find('.input-producto-id').val(producto.id_producto);
-            fila.find('.input-precio').val(Number(producto.precio).toFixed(2));
-            fila.find('.stock-valor').text('Disponible');
-        }
-        recalcularFilaVenta(fila);
-    }, 'json');
+    const texto = input.val().toLowerCase();
+    const opciones = fila.find('.resultado-producto option');
+    opciones.each(function () {
+        const visible = !texto || $(this).text().toLowerCase().includes(texto);
+        $(this).toggle(visible);
+    });
 }
 
 function agregarLineaVenta() {
@@ -447,13 +441,13 @@ function agregarLineaVenta() {
     const fila = $(
         '<tr>' +
             '<td class="numero-fila text-center"></td>' +
-            '<td><input type="text" class="form-control form-control-sm buscar-producto" placeholder="Buscar producto..." autocomplete="off">' +
+            '<td><input type="text" class="form-control form-control-sm buscar-producto" list="lista-productos-' + lineaSecuencia + '" placeholder="Buscar producto..."><datalist id="lista-productos-' + lineaSecuencia + '">' + opcionesProductosHtml() + '</datalist>' +
                 '<input type="hidden" name="productos[]" class="input-producto-id"></td>' +
             '<td class="text-center"><span class="stock-valor">—</span></td>' +
             '<td><input type="number" name="cantidades[]" class="form-control form-control-sm text-center input-cantidad" min="1" step="1" value="1" required></td>' +
             '<td><input type="number" name="costos_venta[]" class="form-control form-control-sm text-end input-precio" min="0" step="0.01" value="" required></td>' +
             '<td class="text-end fw-semibold">S/ <span class="subtotal-linea">0.00</span></td>' +
-            '<td class="text-center"><button type="button" class="btn btn-sm btn-outline-danger btn-quitar-linea"><i class="fas fa-trash"></i></button></td>' +
+            '<td class="text-center"><button type="button" class="btn btn-sm btn-outline-danger btn-quitar-linea" title="Quitar"><i class="fas fa-trash"></i></button></td>' +
         '</tr>'
     );
 
@@ -461,6 +455,28 @@ function agregarLineaVenta() {
     renumerarLineas();
     fila.find('.buscar-producto').focus();
     recalcularTotalesVenta();
+}
+
+function seleccionarProductoEnFila(fila) {
+    const texto = fila.find('.buscar-producto').val().toLowerCase().trim();
+    const producto = productosDisponibles.find(function (p) {
+        return p.nombre.toLowerCase() === texto || (p.codigo && p.codigo.toLowerCase() === texto);
+    });
+
+    fila.find('.input-producto-id').val('');
+    fila.find('.stock-valor').text('—').removeClass('stock-ok stock-low stock-zero');
+    fila.find('.input-precio').val('');
+
+    if (!producto) {
+        recalcularFilaVenta(fila);
+        return;
+    }
+
+    fila.find('.input-producto-id').val(producto.id);
+    fila.find('.input-precio').val(Number(producto.precio).toFixed(2));
+    fila.find('.stock-valor').text(producto.stock).addClass(producto.stock <= 3 ? 'stock-low' : 'stock-ok');
+    fila.find('.input-cantidad').attr('max', producto.stock);
+    recalcularFilaVenta(fila);
 }
 
 function recalcularFilaVenta(fila) {
