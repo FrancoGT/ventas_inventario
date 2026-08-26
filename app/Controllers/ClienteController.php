@@ -27,17 +27,12 @@ class ClienteController extends BaseController
         $data = [];
 
         foreach ($clientes as $c) {
-            $esGenerico = (int) $c->id_cliente === ClienteModel::CLIENTE_GENERICO;
-
             $acciones = '<button class="btn btn-sm btn-editar" data-id="' . $c->id_cliente . '">
                             <i class="fas fa-edit"></i>
-                         </button> ';
-
-            if (!$esGenerico) {
-                $acciones .= '<button class="btn btn-sm btn-danger btn-eliminar" data-id="' . $c->id_cliente . '">
-                                <i class="fas fa-trash"></i>
-                             </button>';
-            }
+                         </button>
+                         <button class="btn btn-sm btn-danger btn-eliminar" data-id="' . $c->id_cliente . '">
+                            <i class="fas fa-trash"></i>
+                         </button>';
 
             $data[] = [
                 'id_cliente'        => $c->id_cliente,

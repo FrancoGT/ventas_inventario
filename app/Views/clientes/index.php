@@ -105,14 +105,13 @@ $(document).ready(function () {
         processing: true,
         ajax: { url: '<?= base_url('clientes/listar') ?>', type: 'POST', dataSrc: 'data' },
         columns: [
-            { data: 'id_cliente', width: '60px', className: 'text-center' },
             { data: 'nombres_apellidos' },
             { data: 'tipo_documento', width: '120px', className: 'text-center' },
             { data: 'numero_documento', width: '140px' },
             { data: 'telefono', width: '120px' },
             { data: 'acciones', orderable: false, searchable: false, className: 'text-center', width: '110px' }
         ],
-        order: [[0, 'desc']],
+        order: [[1, 'desc']],
         language: {
             processing: "Procesando...", search: "Buscar:", lengthMenu: "Mostrar _MENU_ registros",
             info: "Mostrando _START_ a _END_ de _TOTAL_ registros", infoEmpty: "Mostrando 0 a 0 de 0 registros",
