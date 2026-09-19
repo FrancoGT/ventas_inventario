@@ -1,6 +1,16 @@
 <?= $this->extend('layouts/main') ?>
 
 <?= $this->section('content') ?>
+<style>
+    /* Evita que los registros antiguos largos rompan el ancho de la tabla */
+    #tablaProductos td {
+        word-break: break-word;
+        overflow-wrap: anywhere;
+        max-width: 250px;
+        white-space: normal;
+    }
+</style>
+
 <div class="container-fluid">
     <!-- Header -->
     <div class="row mb-3 align-items-center">
@@ -57,25 +67,34 @@
                     <div class="mb-3">
                         <label for="codigo_barras" class="form-label">
                             <i class="fas fa-barcode"></i> Código de Barras <span class="text-danger">*</span>
+                            <small class="text-muted">(Máx. 11 caracteres)</small>
                         </label>
+                        <!-- Límite estricto de 11 caracteres: bloquea la escritura y el pegado -->
                         <input type="text" class="form-control" id="codigo_barras" name="codigo_barras"
-                            placeholder="Ej: 7501234567890" required>
+                            placeholder="Ej: 75012345678" maxlength="11"
+                            oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11);" required>
                     </div>
 
                     <div class="mb-3">
                         <label for="nombre" class="form-label">
                             <i class="fas fa-tag"></i> Nombre del Producto <span class="text-danger">*</span>
+                            <small class="text-muted">(Máx. 50 caracteres)</small>
                         </label>
+                        <!-- Límite estricto de 50 caracteres -->
                         <input type="text" class="form-control" id="nombre" name="nombre"
-                            placeholder="Ej: Camisa Polo Blanca" required>
+                            placeholder="Ej: Camisa Polo Blanca" maxlength="50"
+                            oninput="if(this.value.length > 50) this.value = this.value.slice(0, 50);" required>
                     </div>
 
                     <div class="mb-3">
                         <label for="precio" class="form-label">
                             <i class="fas fa-dollar-sign"></i> Precio (S/) <span class="text-danger">*</span>
+                            <small class="text-muted">(Máx. 99,999.99)</small>
                         </label>
+                        <!-- En type=number el maxlength nativo no siempre frena, por eso se corta en oninput a máx 8 caracteres -->
                         <input type="number" class="form-control" id="precio" name="precio"
-                            placeholder="Ej: 25.50" step="0.01" min="0.01" required>
+                            placeholder="Ej: 25.50" step="0.01" min="0.01" max="99999.99"
+                            oninput="if(this.value.length > 8) this.value = this.value.slice(0, 8);" required>
                     </div>
 
                     <div class="alert alert-warning mb-0">
@@ -124,7 +143,14 @@ $(document).ready(function() {
                     return 'S/ ' + parseFloat(data).toFixed(2);
                 }
             },
-            { data: 'stock', className: 'text-center', width: '100px', render: function(data){ return '<span class="badge bg-info">'+data+'</span>'; } },
+            { 
+                data: 'stock', 
+                className: 'text-center', 
+                width: '100px', 
+                render: function(data) { 
+                    return '<span class="badge bg-info">' + data + '</span>'; 
+                } 
+            },
             { 
                 data: 'acciones',
                 width: '120px',
@@ -164,6 +190,25 @@ $(document).ready(function() {
 
     $('#formProducto').on('submit', function(e) {
         e.preventDefault();
+
+        // Validación extra antes de enviar
+        const cod = $('#codigo_barras').val().trim();
+        const nom = $('#nombre').val().trim();
+        const pre = parseFloat($('#precio').val());
+
+        if (cod.length > 11) {
+            Swal.fire('Error', 'El código de barras no puede tener más de 11 caracteres.', 'warning');
+            return;
+        }
+        if (nom.length > 50) {
+            Swal.fire('Error', 'El nombre no puede tener más de 50 caracteres.', 'warning');
+            return;
+        }
+        if (isNaN(pre) || pre <= 0 || pre > 99999.99) {
+            Swal.fire('Error', 'El precio ingresado no es válido (máx. 99,999.99).', 'warning');
+            return;
+        }
+
         const idProducto = $('#id_producto').val();
         const url = idProducto 
             ? '<?= base_url('productos/actualizar') ?>' 
@@ -192,7 +237,7 @@ $(document).ready(function() {
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
-                        text: response.message
+                        html: response.message
                     });
                 }
             },
@@ -209,21 +254,43 @@ $(document).ready(function() {
         });
     });
 
-    $(document).on('click', '.btn-stock', function(){
-        const id=$(this).data('id');
+    $(document).on('click', '.btn-stock', function() {
+        const id = $(this).data('id');
         Swal.fire({
-            title:'Agregar stock',
-            input:'number',
-            inputLabel:'Cantidad a ingresar',
-            inputAttributes:{min:1},
-            showCancelButton:true,
-            confirmButtonText:'Guardar'
-        }).then((r)=>{
-            if(r.isConfirmed){
-                $.post('<?= base_url('productos/agregar-stock') ?>',{id_producto:id,cantidad:r.value},function(resp){
-                    if(resp.status==='success'){ Swal.fire('OK',resp.message,'success'); tabla.ajax.reload(null,false); }
-                    else Swal.fire('Error',resp.message,'error');
-                },'json');
+            title: 'Agregar stock',
+            input: 'number',
+            inputLabel: 'Cantidad a ingresar (máx. 99,999)',
+            inputAttributes: {
+                min: 1,
+                max: 99999,
+                step: 1,
+                maxlength: 5,
+                oninput: "if(this.value.length > 5) this.value = this.value.slice(0, 5);"
+            },
+            showCancelButton: true,
+            confirmButtonText: 'Guardar',
+            cancelButtonText: 'Cancelar',
+            preConfirm: (valor) => {
+                const cant = parseInt(valor, 10);
+                if (!valor || isNaN(cant) || cant <= 0 || cant > 99999) {
+                    Swal.showValidationMessage('Ingresa una cantidad válida entre 1 y 99,999');
+                    return false;
+                }
+                return cant;
+            }
+        }).then((r) => {
+            if (r.isConfirmed) {
+                $.post('<?= base_url('productos/agregar-stock') ?>', {
+                    id_producto: id,
+                    cantidad: r.value
+                }, function(resp) {
+                    if (resp.status === 'success') { 
+                        Swal.fire('OK', resp.message, 'success'); 
+                        tabla.ajax.reload(null, false); 
+                    } else {
+                        Swal.fire('Error', resp.message, 'error');
+                    }
+                }, 'json');
             }
         });
     });
@@ -240,8 +307,8 @@ $(document).ready(function() {
             success: function(response) {
                 if (response.status === 'success' && response.data) {
                     $('#id_producto').val(response.data.id_producto);
-                    $('#codigo_barras').val(response.data.codigo_barras);
-                    $('#nombre').val(response.data.nombre);
+                    $('#codigo_barras').val(response.data.codigo_barras ? response.data.codigo_barras.slice(0, 11) : '');
+                    $('#nombre').val(response.data.nombre ? response.data.nombre.slice(0, 50) : '');
                     $('#precio').val(response.data.precio);
                     $('#modalProductoTitulo').html('<i class="fas fa-edit"></i> Editar Producto');
                     modalProducto.show();
