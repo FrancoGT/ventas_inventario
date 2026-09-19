@@ -53,13 +53,14 @@
                         </div>
 
                         <div class="col-md-5">
-                            <label for="buscar_cliente" class="form-label">Cliente <span class="text-danger">*</span></label>
+                            <label for="buscar_cliente" class="form-label">Cliente <span class="text-danger">*</span> <small class="text-muted">(Máx. 100 caracteres)</small></label>
                             <div class="input-group">
                                 <input type="hidden" id="id_cliente" name="id_cliente" value="<?= (int) \App\Models\ClienteModel::CLIENTE_GENERICO ?>">
                                 <div class="autocomplete-container flex-grow-1">
                                     <input type="text" class="form-control buscador-universal" id="buscar_cliente" 
                                         data-hidden="#id_cliente" data-url="<?= base_url('clientes/buscar') ?>" 
-                                        placeholder="Buscar cliente por nombre o documento..." autocomplete="off" required>
+                                        placeholder="Buscar cliente por nombre o documento..." autocomplete="off" 
+                                        maxlength="100" oninput="if(this.value.length > 100) this.value = this.value.slice(0, 100);" required>
                                     <div class="autocomplete-dropdown"></div>
                                 </div>
                                 <a href="<?= base_url('clientes') ?>" class="btn btn-outline-secondary" title="Administrar clientes">
@@ -117,12 +118,15 @@
 
                     <div class="row g-3 mt-3">
                         <div class="col-lg-7">
-                            <label for="direccion_entrega" class="form-label">Dirección de entrega</label>
-                            <input type="text" class="form-control" id="direccion_entrega" name="direccion_entrega" maxlength="255" placeholder="Opcional">
+                            <label for="direccion_entrega" class="form-label">Dirección de entrega <small class="text-muted">(Máx. 150 caracteres)</small></label>
+                            <input type="text" class="form-control" id="direccion_entrega" name="direccion_entrega" 
+                                maxlength="150" oninput="if(this.value.length > 150) this.value = this.value.slice(0, 150);" placeholder="Opcional">
                         </div>
                         <div class="col-md-5 col-lg-2">
-                            <label for="costo_delivery" class="form-label">Delivery (S/)</label>
-                            <input type="number" class="form-control text-end" id="costo_delivery" name="costo_delivery" min="0" step="0.01" value="0.00">
+                            <label for="costo_delivery" class="form-label">Delivery (S/) <small class="text-muted">(Máx. 999.99)</small></label>
+                            <input type="number" class="form-control text-end" id="costo_delivery" name="costo_delivery" 
+                                min="0" max="999.99" step="0.01" value="0.00"
+                                oninput="if(this.value.length > 6) this.value = this.value.slice(0, 6);">
                         </div>
                         <div class="col-md-7 col-lg-3">
                             <label class="form-label">Total</label>
@@ -159,7 +163,7 @@
                 </div>
 
                 <div class="table-responsive">
-                    <table class="table table-bordered table-striped align-middle">
+                    <table class="table table-bordered table-striped align-middle" id="tablaDetalleVistaGeneral">
                         <thead class="table-light">
                             <tr>
                                 <th style="width:45px" class="text-center">#</th>
@@ -196,8 +200,14 @@
 
 <?= $this->section('css') ?>
 <style>
-#tablaVentas th,
-#tablaVentas td { vertical-align: middle; }
+/* Evita roturas por caracteres largos en listados o reportes */
+#tablaVentas td,
+#tablaDetalleVenta td,
+#tablaDetalleVistaGeneral td {
+    vertical-align: middle;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+}
 
 #tablaVentas .btn { margin: 2px; }
 
@@ -361,13 +371,23 @@ function registrarEventosVentas() {
 
     $('#btnAgregarLinea').on('click', agregarLineaVenta);
 
-    $('#costo_delivery').on('input', recalcularTotalesVenta);
+    $('#costo_delivery').on('input', function() {
+        if (this.value.length > 6) this.value = this.value.slice(0, 6);
+        recalcularTotalesVenta();
+    });
 
     $('#tbodyDetalle').on('input', '.buscar-producto', function () {
+        if (this.value.length > 50) this.value = this.value.slice(0, 50);
         buscarProductosVenta($(this));
     });
 
-    $('#tbodyDetalle').on('input', '.input-cantidad, .input-precio', function () {
+    $('#tbodyDetalle').on('input', '.input-cantidad', function () {
+        if (this.value.length > 4) this.value = this.value.slice(0, 4);
+        recalcularFilaVenta($(this).closest('tr'));
+    });
+
+    $('#tbodyDetalle').on('input', '.input-precio', function () {
+        if (this.value.length > 8) this.value = this.value.slice(0, 8);
         recalcularFilaVenta($(this).closest('tr'));
     });
 
@@ -416,6 +436,7 @@ function inicializarBuscadoresDinamicos() {
     let timerCliente = null;
 
     $('#buscar_cliente').on('input', function () {
+        if (this.value.length > 100) this.value = this.value.slice(0, 100);
         clearTimeout(timerCliente);
         const input = $(this);
         const termino = input.val().trim();
@@ -443,7 +464,7 @@ function inicializarBuscadoresDinamicos() {
                     const item = $('<button type="button" class="autocomplete-item"></button>');
                     item.text(texto);
                     item.on('click', function () {
-                        $('#buscar_cliente').val(texto);
+                        $('#buscar_cliente').val(texto.slice(0, 100));
                         $('#id_cliente').val(c.id_cliente);
                         contenedor.empty().removeClass('show');
                     });
@@ -487,7 +508,7 @@ function buscarProductosVenta(input) {
                 boton.text(p.nombre + (p.codigo_barras ? ' - ' + p.codigo_barras : ''));
 
                 boton.on('click', function () {
-                    fila.find('.buscar-producto').val(p.nombre);
+                    fila.find('.buscar-producto').val(p.nombre.slice(0, 50));
                     fila.find('.input-producto-id').val(p.id_producto);
                     fila.find('.input-precio').val(Number(p.precio).toFixed(2));
                     fila.find('.stock-valor').text(p.stock_actual !== undefined ? p.stock_actual : (p.stock || '—'));
@@ -514,14 +535,14 @@ function agregarLineaVenta() {
             '<td class="numero-fila text-center"></td>' +
             '<td>' +
                 '<div class="autocomplete-container">' +
-                    '<input type="text" class="form-control form-control-sm buscar-producto" placeholder="Buscar producto..." autocomplete="off">' +
+                    '<input type="text" class="form-control form-control-sm buscar-producto" placeholder="Buscar producto..." maxlength="50" oninput="if(this.value.length > 50) this.value = this.value.slice(0, 50);" autocomplete="off">' +
                     '<div class="autocomplete-dropdown resultado-productos"></div>' +
                     '<input type="hidden" name="productos[]" class="input-producto-id">' +
                 '</div>' +
             '</td>' +
             '<td class="text-center"><span class="stock-valor">—</span></td>' +
-            '<td><input type="number" name="cantidades[]" class="form-control form-control-sm text-center input-cantidad" min="1" step="1" value="1" required></td>' +
-            '<td><input type="number" name="costos_venta[]" class="form-control form-control-sm text-end input-precio" min="0" step="0.01" value="" required></td>' +
+            '<td><input type="number" name="cantidades[]" class="form-control form-control-sm text-center input-cantidad" min="1" max="9999" step="1" value="1" maxlength="4" oninput="if(this.value.length > 4) this.value = this.value.slice(0, 4);" required></td>' +
+            '<td><input type="number" name="costos_venta[]" class="form-control form-control-sm text-end input-precio" min="0" max="99999.99" step="0.01" value="" maxlength="8" oninput="if(this.value.length > 8) this.value = this.value.slice(0, 8);" required></td>' +
             '<td class="text-end fw-semibold">S/ <span class="subtotal-linea">0.00</span></td>' +
             '<td class="text-center"><button type="button" class="btn btn-sm btn-outline-danger btn-quitar-linea" title="Quitar"><i class="fas fa-trash"></i></button></td>' +
         '</tr>'
@@ -589,6 +610,18 @@ function validarFormularioVenta() {
         return false;
     }
 
+    const direccion = $('#direccion_entrega').val().trim();
+    if (direccion.length > 150) {
+        mostrarAdvertencia('Dirección', 'La dirección no puede superar los 150 caracteres.');
+        return false;
+    }
+
+    const delivery = Number($('#costo_delivery').val()) || 0;
+    if (delivery < 0 || delivery > 999.99) {
+        mostrarAdvertencia('Delivery', 'El costo de delivery debe estar entre 0 y 999.99.');
+        return false;
+    }
+
     const filas = $('#tbodyDetalle tr');
     if (!filas.length) {
         mostrarAdvertencia('Sin productos', 'Agregue al menos un producto.');
@@ -610,10 +643,10 @@ function validarFormularioVenta() {
             mensaje = 'Seleccione un producto en la fila ' + (index + 1) + '.';
         } else if (ids.includes(id)) {
             mensaje = 'Hay un producto repetido en la fila ' + (index + 1) + '.';
-        } else if (!Number.isInteger(cantidad) || cantidad <= 0) {
-            mensaje = 'La cantidad de la fila ' + (index + 1) + ' debe ser un entero mayor a 0.';
-        } else if (!Number.isFinite(precio) || precio < 0) {
-            mensaje = 'El precio de la fila ' + (index + 1) + ' no es válido.';
+        } else if (!Number.isInteger(cantidad) || cantidad <= 0 || cantidad > 9999) {
+            mensaje = 'La cantidad de la fila ' + (index + 1) + ' debe estar entre 1 y 9,999.';
+        } else if (!Number.isFinite(precio) || precio < 0 || precio > 99999.99) {
+            mensaje = 'El precio de la fila ' + (index + 1) + ' no puede exceder los S/ 99,999.99.';
         }
 
         ids.push(id);
@@ -621,12 +654,6 @@ function validarFormularioVenta() {
 
     if (mensaje) {
         mostrarAdvertencia('Revise la venta', mensaje);
-        return false;
-    }
-
-    const delivery = Number($('#costo_delivery').val()) || 0;
-    if (delivery < 0) {
-        mostrarAdvertencia('Delivery', 'El costo de delivery no puede ser negativo.');
         return false;
     }
 
@@ -767,9 +794,12 @@ function solicitarAnulacionVenta(idVenta) {
         icon: 'warning',
         title: 'Anular venta',
         input: 'textarea',
-        inputLabel: 'Motivo de anulación',
+        inputLabel: 'Motivo de anulación (máx. 150 caracteres)',
         inputPlaceholder: 'Escriba el motivo...',
-        inputAttributes: { maxlength: 500 },
+        inputAttributes: {
+            maxlength: 150,
+            oninput: "if(this.value.length > 150) this.value = this.value.slice(0, 150);"
+        },
         showCancelButton: true,
         confirmButtonText: 'Anular venta',
         cancelButtonText: 'Cancelar',
@@ -780,7 +810,11 @@ function solicitarAnulacionVenta(idVenta) {
                 Swal.showValidationMessage('Debe indicar el motivo de anulación.');
                 return false;
             }
-            return texto;
+            if (texto.length > 150) {
+                Swal.showValidationMessage('El motivo no puede exceder los 150 caracteres.');
+                return false;
+            }
+            return texto.slice(0, 150);
         }
     }).then(function (result) {
         if (!result.isConfirmed) return;
