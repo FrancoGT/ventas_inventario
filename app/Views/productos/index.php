@@ -132,7 +132,11 @@ $(document).ready(function() {
             dataSrc: 'data'
         },
         columns: [
-            { data: 'id_producto', width: '60px', className: 'text-center' },
+            { 
+                data: 'id_producto', 
+                visible: false,      // Oculta la columna de la vista
+                searchable: false    // Evita que interfiera en la barra de búsqueda general
+            },
             { data: 'codigo_barras', width: '20%' },
             { data: 'nombre' },
             { 
@@ -159,7 +163,7 @@ $(document).ready(function() {
                 className: 'text-center'
             }
         ],
-        order: [[0, 'desc']],
+        order: [[0, 'desc']], // Mantiene el orden descendente por ID aunque no se muestre
         autoWidth: false,
         scrollX: false,
         language: {
