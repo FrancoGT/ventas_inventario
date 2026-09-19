@@ -1,6 +1,17 @@
 <?= $this->extend('layouts/main') ?>
 
 <?= $this->section('content') ?>
+<style>
+    /* Evita que descripciones largas o montos infinitos desborden la tabla */
+    #tablaEgresos td {
+        vertical-align: middle;
+        word-break: break-word;
+        overflow-wrap: anywhere;
+        max-width: 250px;
+        white-space: normal;
+    }
+</style>
+
 <div class="container-fluid">
     <div class="row mb-3 align-items-center">
         <div class="col">
@@ -55,6 +66,7 @@
                     <div class="mb-3">
                         <label for="compra_mercaderia" class="form-label">
                             <i class="fas fa-shopping-cart"></i> Compra Mercadería (S/) <span class="text-danger">*</span>
+                            <small class="text-muted">(Máx. 99,999.99)</small>
                         </label>
                         <input type="number"
                                class="form-control"
@@ -63,12 +75,15 @@
                                placeholder="Ej: 500.00"
                                step="0.01"
                                min="0"
+                               max="99999.99"
+                               oninput="if(this.value.length > 8) this.value = this.value.slice(0, 8);"
                                required>
                     </div>
 
                     <div class="mb-3">
                         <label for="flete" class="form-label">
                             <i class="fas fa-truck"></i> Flete (S/) <span class="text-danger">*</span>
+                            <small class="text-muted">(Máx. 9,999.99)</small>
                         </label>
                         <input type="number"
                                class="form-control"
@@ -77,18 +92,22 @@
                                placeholder="Ej: 50.00"
                                step="0.01"
                                min="0"
+                               max="9999.99"
+                               oninput="if(this.value.length > 7) this.value = this.value.slice(0, 7);"
                                required>
                     </div>
 
                     <div class="mb-3">
                         <label for="descripcion" class="form-label">
                             <i class="fas fa-align-left"></i> Descripción
+                            <small class="text-muted">(Máx. 150 caracteres)</small>
                         </label>
                         <textarea class="form-control"
                                   id="descripcion"
                                   name="descripcion"
                                   rows="3"
-                                  maxlength="500"
+                                  maxlength="150"
+                                  oninput="if(this.value.length > 150) this.value = this.value.slice(0, 150);"
                                   placeholder="Descripción opcional del egreso..."></textarea>
                     </div>
 
@@ -197,6 +216,25 @@ $(document).ready(function () {
     $('#formEgreso').on('submit', function (e) {
         e.preventDefault();
 
+        const compra = parseFloat($('#compra_mercaderia').val());
+        const flete = parseFloat($('#flete').val());
+        const desc = $('#descripcion').val().trim();
+
+        if (isNaN(compra) || compra < 0 || compra > 99999.99) {
+            Swal.fire('Atención', 'El monto de compra mercadería debe estar entre 0 y 99,999.99.', 'warning');
+            return;
+        }
+
+        if (isNaN(flete) || flete < 0 || flete > 9999.99) {
+            Swal.fire('Atención', 'El flete debe estar entre 0 y 9,999.99.', 'warning');
+            return;
+        }
+
+        if (desc.length > 150) {
+            Swal.fire('Atención', 'La descripción no puede superar los 150 caracteres.', 'warning');
+            return;
+        }
+
         const id = $('#id_egreso').val();
         const btnGuardar = $('#btnGuardar');
 
@@ -276,10 +314,13 @@ $(document).ready(function () {
             return;
         }
 
+        const compra = parseFloat(fila.compra_mercaderia || 0);
+        const flete = parseFloat(fila.flete || 0);
+
         $('#id_egreso').val(fila.id_egreso);
-        $('#compra_mercaderia').val(parseFloat(fila.compra_mercaderia || 0).toFixed(2));
-        $('#flete').val(parseFloat(fila.flete || 0).toFixed(2));
-        $('#descripcion').val(fila.descripcion || '');
+        $('#compra_mercaderia').val(compra > 99999.99 ? '99999.99' : compra.toFixed(2));
+        $('#flete').val(flete > 9999.99 ? '9999.99' : flete.toFixed(2));
+        $('#descripcion').val(fila.descripcion ? fila.descripcion.slice(0, 150) : '');
 
         $('#modalEgresoTitulo').html('<i class="fas fa-edit"></i> Editar Egreso');
         $('#btnGuardar').html('<i class="fas fa-save"></i> Actualizar');
